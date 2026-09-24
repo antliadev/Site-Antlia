@@ -1128,19 +1128,27 @@ function PageHero({
   action?: string
 }) {
   const h = cleanText(title || page?.title || 'Antlia')
+  const isArticle = page?.type === 'artigo'
 
   return (
-    <section className="page-hero">
+    <section className={`page-hero ${isArticle ? 'article-hero' : ''}`}>
       <HeroMedia page={page} />
       <div className="hero-overlay" />
       <div className="page-hero-inner">
-        <Kicker text={tag} />
-        <h1 className={h.length > 52 ? 'long-title' : ''}>{h}</h1>
-        <p>{description}</p>
-        {action && (
-          <button className="button signal" onClick={() => navigate('contato')}>
-            {action} <ArrowUpRight size={17} />
-          </button>
+        <div>
+          <Kicker text={tag} />
+          <h1 className={h.length > 52 ? 'long-title' : ''}>{h}</h1>
+          <p>{description}</p>
+          {action && (
+            <button className="button signal" onClick={() => navigate('contato')}>
+              {action} <ArrowUpRight size={17} />
+            </button>
+          )}
+        </div>
+        {isArticle && page?.image && (
+          <figure className="article-hero-image">
+            <img src={page.image} alt="" />
+          </figure>
         )}
       </div>
     </section>
@@ -1156,11 +1164,7 @@ function Kicker({ text }: { text: string }) {
 }
 
 function HeroMedia({ page }: { page?: Page }) {
-  const src = page?.slug === 'home'
-    ? '/media/home-hero.png'
-    : page?.type === 'artigo'
-      ? page.image
-      : ''
+  const src = page?.slug === 'home' ? '/media/home-hero.png' : ''
 
   return src ? <img className="hero-media" src={src} alt="" /> : <div className="hero-media fallback-media" />
 }
