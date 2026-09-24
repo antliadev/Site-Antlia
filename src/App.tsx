@@ -959,13 +959,6 @@ function Editorial({ page }: { page: Page }) {
     <>
       <PageHero page={page} tag={label(page.type)} description={desc(page)} />
       <section className="article-shell section">
-        <aside>
-          <span>Leitura</span>
-          <strong style={{ fontSize: '16px', color: 'var(--text-primary)' }}>
-            {Math.max(3, Math.ceil(page.blocks.flatMap((b) => b.paragraphs).join(' ').split(' ').length / 210))} min
-          </strong>
-          <i />
-        </aside>
         <div>
           <div className="answer-box">
             <span>Resumo</span>

@@ -1554,25 +1554,8 @@ footer {
 
 /* Article Shell */
 .article-shell {
-  display: grid;
-  grid-template-columns: 140px minmax(0, 780px);
-  gap: 64px;
-  justify-content: center;
-}
-
-.article-shell > aside {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--antlia-blue);
-}
-
-.article-shell > aside i {
-  width: 1px;
-  height: 96px;
-  background: var(--border-light);
+  max-width: 780px;
+  margin: 0 auto;
 }
 
 .answer-box {
