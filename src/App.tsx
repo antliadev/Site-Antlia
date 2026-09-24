@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { AnimatePresence, motion, type Variants } from 'framer-motion'
 import {
   ArrowRight,
   ArrowUpRight,
   BriefcaseBusiness,
   Check,
+  ChevronDown,
   Code2,
   FileCheck2,
   Headphones,
@@ -130,61 +131,81 @@ const desc = (p: Page) =>
   )
 const byRecent = (a: Page, b: Page) => (Date.parse(b.publishedAt || '') || 0) - (Date.parse(a.publishedAt || '') || 0)
 
-const navItems = [
+type NavLinkItem = readonly [label: string, slug: string, descText: string]
+type NavCategory = {
+  readonly key: string
+  readonly label: string
+  readonly slug: string
+  readonly badge: string
+  readonly title: string
+  readonly description: string
+  readonly links: readonly NavLinkItem[]
+}
+
+const navItems: readonly NavCategory[] = [
   {
     key: 'empresa',
     label: 'Empresa',
     slug: 'home',
+    badge: 'MISSÃO & CRITÉRIO',
     title: 'Tecnologia com responsabilidade operacional.',
     description: 'Conheça a Antlia, nossa forma de atuar e os sinais que orientam cada entrega.',
     links: [
-      ['A Antlia', 'home'],
-      ['Governança ESG', 'esg-antlia'],
-      ['Carreiras', 'trabalhe-conosco'],
+      ['A Antlia', 'home', 'Posicionamento, DNA de engenharia e cultura institucional'],
+      ['Governança ESG', 'esg-antlia', 'Práticas éticas, sustentabilidade e integridade corporativa'],
+      ['Carreiras', 'trabalhe-conosco', 'Oportunidades para engenheiros e líderes técnicos'],
     ],
   },
   {
     key: 'capacidades',
     label: 'Capacidades',
     slug: 'nossas-solucoes',
+    badge: 'ENGENHARIA INTEGRADA',
     title: 'Frentes técnicas para construir, ampliar e sustentar.',
     description: 'Software, squads, qualidade e suporte organizados conforme o momento do seu projeto.',
-    links: services.map(([slug]) => [cleanText(bySlug.get(slug)?.title), slug]),
+    links: services.map(([slug, , descText]) => [
+      cleanText(bySlug.get(slug)?.title) || slug,
+      slug,
+      descText,
+    ]),
   },
   {
     key: 'insights',
     label: 'Insights',
     slug: 'blog',
+    badge: 'CONHECIMENTO TÉCNICO',
     title: 'Leituras para decisões técnicas mais seguras.',
     description: 'Artigos e conteúdos institucionais para equipes que precisam evoluir com critério.',
     links: [
-      ['Todos os artigos', 'blog'],
-      ['Soluções Antlia', 'nossas-solucoes'],
-      ['Falar com especialista', 'contato'],
+      ['Todos os artigos', 'blog', 'Publicações sobre arquitetura, liderança e engenharia'],
+      ['Soluções Antlia', 'nossas-solucoes', 'Catálogo completo de entregas e serviços'],
+      ['Falar com especialista', 'contato', 'Diagnóstico preliminar e desenho de solução'],
     ],
   },
   {
     key: 'esg',
     label: 'ESG',
     slug: 'esg-antlia',
+    badge: 'GOVERNANÇA & DADOS',
     title: 'Governança aplicada ao jeito de entregar.',
     description: 'Princípios de responsabilidade, segurança e continuidade conectados a tecnologia.',
     links: [
-      ['Governança ESG', 'esg-antlia'],
-      ['Privacidade', 'politica-de-privacidade'],
-      ['Cookies', 'politica-de-cookies-br'],
+      ['Governança ESG', 'esg-antlia', 'Compromisso com impacto positivo e governança sólida'],
+      ['Privacidade', 'politica-de-privacidade', 'Diretrizes de proteção e conformidade LGPD'],
+      ['Cookies', 'politica-de-cookies-br', 'Transparência no uso de dados e navegação'],
     ],
   },
   {
     key: 'carreiras',
     label: 'Carreiras',
     slug: 'trabalhe-conosco',
+    badge: 'TALENTOS & SQUADS',
     title: 'Pessoas técnicas para problemas concretos.',
     description: 'Conheça oportunidades e a forma como conectamos profissionais ao contexto certo.',
     links: [
-      ['Trabalhe conosco', 'trabalhe-conosco'],
-      ['Alocação de profissionais', 'alocacao-de-programadores'],
-      ['Contato', 'contato'],
+      ['Trabalhe conosco', 'trabalhe-conosco', 'Vagas abertas para desenvolvedores e arquitetos'],
+      ['Alocação de profissionais', 'alocacao-de-programadores', 'Squads e especialistas sob medida para sua demanda'],
+      ['Contato', 'contato', 'Fale diretamente com nossa equipe de pessoas e tecnologia'],
     ],
   },
 ] as const
@@ -277,6 +298,97 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
   )
 }
 
+const fanContainerVariants: Variants = {
+  hidden: {
+    opacity: 0,
+    height: 0,
+    scaleY: 0.93,
+    transformOrigin: 'top center',
+    filter: 'blur(8px)',
+  },
+  visible: {
+    opacity: 1,
+    height: 'auto',
+    scaleY: 1,
+    filter: 'blur(0px)',
+    transition: {
+      duration: 0.38,
+      ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
+    },
+  },
+  exit: {
+    opacity: 0,
+    height: 0,
+    scaleY: 0.95,
+    filter: 'blur(5px)',
+    transition: {
+      duration: 0.22,
+      ease: [0.32, 0, 0.67, 0] as [number, number, number, number],
+    },
+  },
+}
+
+const fanGridVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.04,
+      delayChildren: 0.05,
+    },
+  },
+  exit: {
+    opacity: 0,
+    transition: {
+      staggerChildren: 0.02,
+      staggerDirection: -1,
+    },
+  },
+}
+
+const fanBladeVariants: Variants = {
+  hidden: ({ index, total }: { index: number; total: number }) => {
+    const center = Math.max(1, (total - 1) / 2)
+    const offset = total > 1 ? (index - center) / center : 0
+    return {
+      opacity: 0,
+      y: 28,
+      x: offset * 22,
+      rotateZ: offset * 4.5,
+      rotateX: -18,
+      scale: 0.92,
+      filter: 'blur(3px)',
+      transformOrigin: 'top center',
+    }
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    x: 0,
+    rotateZ: 0,
+    rotateX: 0,
+    scale: 1,
+    filter: 'blur(0px)',
+    transition: {
+      type: 'spring' as const,
+      stiffness: 270,
+      damping: 24,
+      mass: 0.85,
+    },
+  },
+  exit: ({ index, total }: { index: number; total: number }) => {
+    const center = Math.max(1, (total - 1) / 2)
+    const offset = total > 1 ? (index - center) / center : 0
+    return {
+      opacity: 0,
+      y: -8,
+      rotateZ: offset * 2.5,
+      scale: 0.96,
+      transition: { duration: 0.16, ease: 'easeIn' },
+    }
+  },
+}
+
 function Header({
   menu,
   setMenu,
@@ -291,18 +403,57 @@ function Header({
   openSearch: () => void
 }) {
   const activeItem = navItems.find((item) => item.key === activeNav)
+  const leaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const handleMouseEnterItem = (key: string) => {
+    if (leaveTimeoutRef.current) {
+      clearTimeout(leaveTimeoutRef.current)
+      leaveTimeoutRef.current = null
+    }
+    setActiveNav(key)
+  }
+
+  const handleMouseLeaveHeader = () => {
+    if (leaveTimeoutRef.current) clearTimeout(leaveTimeoutRef.current)
+    leaveTimeoutRef.current = setTimeout(() => {
+      setActiveNav(null)
+    }, 180)
+  }
+
+  const handleMouseEnterHeader = () => {
+    if (leaveTimeoutRef.current) {
+      clearTimeout(leaveTimeoutRef.current)
+      leaveTimeoutRef.current = null
+    }
+  }
+
+  useEffect(() => {
+    return () => {
+      if (leaveTimeoutRef.current) clearTimeout(leaveTimeoutRef.current)
+    }
+  }, [])
 
   return (
-    <header className="site-header" onMouseLeave={() => setActiveNav(null)}>
+    <header
+      className="site-header"
+      onMouseEnter={handleMouseEnterHeader}
+      onMouseLeave={handleMouseLeaveHeader}
+    >
       <div className="header-inner">
         <Brand />
-        <nav className={menu ? 'nav open' : 'nav'} aria-label="Navegação Principal">
+        <nav
+          className={menu ? 'nav open' : 'nav'}
+          aria-label="Navegação Principal"
+          onMouseEnter={() => {
+            if (!activeNav && !menu) setActiveNav('capacidades')
+          }}
+        >
           {navItems.map((item) => (
             <button
               key={item.key}
               className={activeNav === item.key ? 'nav-link active' : 'nav-link'}
-              onMouseEnter={() => setActiveNav(item.key)}
-              onFocus={() => setActiveNav(item.key)}
+              onMouseEnter={() => handleMouseEnterItem(item.key)}
+              onFocus={() => handleMouseEnterItem(item.key)}
               onClick={() => {
                 navigate(item.slug)
                 setActiveNav(null)
@@ -310,7 +461,18 @@ function Header({
               }}
               aria-expanded={activeNav === item.key}
             >
-              {item.label}
+              {activeNav === item.key && (
+                <motion.span
+                  layoutId="navHoverPill"
+                  className="nav-hover-pill"
+                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                />
+              )}
+              <span className="nav-link-label">{item.label}</span>
+              <ChevronDown
+                size={12}
+                className={`nav-chevron ${activeNav === item.key ? 'open' : ''}`}
+              />
             </button>
           ))}
         </nav>
@@ -333,48 +495,95 @@ function Header({
           </button>
         </div>
       </div>
-      <AnimatePresence>{activeItem && !menu && <NavPanel item={activeItem} close={() => setActiveNav(null)} />}</AnimatePresence>
+      <AnimatePresence>
+        {activeItem && !menu && (
+          <NavPanel
+            item={activeItem}
+            close={() => setActiveNav(null)}
+          />
+        )}
+      </AnimatePresence>
     </header>
   )
 }
 
-function NavPanel({ item, close }: { item: (typeof navItems)[number]; close: () => void }) {
+function NavPanel({ item, close }: { item: NavCategory; close: () => void }) {
+  const total = item.links.length
+
   return (
     <motion.div
       className="nav-panel"
-      initial={{ opacity: 0, y: -8 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -8 }}
-      transition={{ duration: 0.18 }}
+      variants={fanContainerVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
     >
-      <div className="nav-panel-intro">
-        <span className="eyebrow light">{item.label}</span>
-        <h2>{item.title}</h2>
-        <p>{item.description}</p>
-        <button
-          onClick={() => {
-            navigate(item.slug)
-            close()
-          }}
+      <div className="nav-panel-beam" />
+      <div className="nav-panel-glow" />
+      <motion.div
+        key={item.key}
+        className="nav-panel-inner"
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <motion.div
+          className="nav-panel-intro"
+          initial={{ opacity: 0, x: -16 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
         >
-          Abrir {item.label.toLowerCase()} <ArrowRight size={16} />
-        </button>
-      </div>
-      <div className="nav-panel-grid">
-        {item.links.map(([label, slug]) => (
+          <div className="nav-panel-meta">
+            <span className="eyebrow light">{item.badge}</span>
+            <span className="nav-panel-status">
+              <span className="status-ping" />
+              SLA 99.9%
+            </span>
+          </div>
+          <h2>{item.title}</h2>
+          <p>{item.description}</p>
           <button
-            key={slug}
-            className="nav-panel-card"
+            className="nav-panel-cta"
             onClick={() => {
-              navigate(slug)
+              navigate(item.slug)
               close()
             }}
           >
-            <strong>{label}</strong>
-            <ArrowUpRight size={15} />
+            <span>Ver {item.label.toLowerCase()}</span>
+            <ArrowRight size={15} />
           </button>
-        ))}
-      </div>
+        </motion.div>
+
+        <motion.div
+          className="nav-panel-grid"
+          variants={fanGridVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {item.links.map(([label, slug, descText], index) => (
+            <motion.button
+              key={slug}
+              className="nav-panel-card"
+              custom={{ index, total }}
+              variants={fanBladeVariants}
+              whileHover={{ y: -3, scale: 1.015 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => {
+                navigate(slug)
+                close()
+              }}
+            >
+              <div className="nav-panel-card-head">
+                <strong>{label}</strong>
+                <div className="nav-panel-card-icon">
+                  <ArrowUpRight size={13} />
+                </div>
+              </div>
+              {descText && <p className="nav-panel-card-desc">{descText}</p>}
+            </motion.button>
+          ))}
+        </motion.div>
+      </motion.div>
     </motion.div>
   )
 }
