@@ -1013,14 +1013,22 @@ function Process() {
 }
 
 function Card({ page, featured = false }: { page: Page; featured?: boolean }) {
+  const [imgError, setImgError] = useState(false)
+  const hasValidImage = Boolean(page.image && !page.image.includes('gravatar.com') && !page.image.includes('/avatar/') && !imgError)
+
   return (
     <button className={`article-card ${featured ? 'featured' : ''}`} onClick={() => navigate(page.slug)}>
       <div className="article-image">
-        {page.image ? (
-            <img src={page.image} alt={cleanText(page.title)} loading="lazy" />
+        {hasValidImage ? (
+          <img
+            src={page.image!}
+            alt={cleanText(page.title)}
+            loading="lazy"
+            onError={() => setImgError(true)}
+          />
         ) : (
           <div className="image-fallback">
-            <img src="/brand/simbolo-antlia-gradiente.png" alt="" loading="lazy" />
+            <img src="/brand/simbolo-antlia-gradiente.png" alt="Antlia" loading="lazy" />
           </div>
         )}
       </div>

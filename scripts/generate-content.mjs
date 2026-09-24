@@ -76,7 +76,7 @@ function extract(file) {
 
   for (const raw of section) {
     const image = raw.match(/!\[[^\]]*\]\((https?:\/\/[^)]+)\)/)
-    if (image && !image[1].includes('Logo-Antlia') && !image[1].includes('cropped-logo') && !image[1].includes('plugin')) images.push(image[1].split(' "')[0])
+    if (image && !image[1].includes('Logo-Antlia') && !image[1].includes('cropped-logo') && !image[1].includes('plugin') && !image[1].includes('gravatar.com') && !image[1].includes('/avatar/')) images.push(image[1].split(' "')[0])
     const h = raw.match(/^(#{1,3})\s+(.+)/)
     if (h) {
       const title = cleanInline(h[2])
