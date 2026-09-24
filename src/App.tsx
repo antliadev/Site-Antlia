@@ -5,11 +5,13 @@ import {
   ArrowUpRight,
   BriefcaseBusiness,
   Check,
-  ChevronDown,
   Code2,
   FileCheck2,
   Headphones,
+  Mail,
   Menu,
+  MessageCircle,
+  Phone,
   Search,
   ShieldCheck,
   UsersRound,
@@ -121,6 +123,65 @@ const desc = (p: Page) =>
       : p.blocks.flatMap((b) => b.paragraphs)[0] || 'Conteúdo institucional Antlia.'
   )
 
+const navItems = [
+  {
+    key: 'empresa',
+    label: 'Empresa',
+    slug: 'home',
+    title: 'Tecnologia com responsabilidade operacional.',
+    description: 'Conheça a Antlia, nossa forma de atuar e os sinais que orientam cada entrega.',
+    links: [
+      ['A Antlia', 'home'],
+      ['Governança ESG', 'esg-antlia'],
+      ['Carreiras', 'trabalhe-conosco'],
+    ],
+  },
+  {
+    key: 'capacidades',
+    label: 'Capacidades',
+    slug: 'nossas-solucoes',
+    title: 'Frentes técnicas para construir, ampliar e sustentar.',
+    description: 'Software, squads, qualidade e suporte organizados conforme o momento do seu projeto.',
+    links: services.map(([slug]) => [cleanText(bySlug.get(slug)?.title), slug]),
+  },
+  {
+    key: 'insights',
+    label: 'Insights',
+    slug: 'blog',
+    title: 'Leituras para decisões técnicas mais seguras.',
+    description: 'Artigos e conteúdos institucionais para equipes que precisam evoluir com critério.',
+    links: [
+      ['Todos os artigos', 'blog'],
+      ['Soluções Antlia', 'nossas-solucoes'],
+      ['Falar com especialista', 'contato'],
+    ],
+  },
+  {
+    key: 'esg',
+    label: 'ESG',
+    slug: 'esg-antlia',
+    title: 'Governança aplicada ao jeito de entregar.',
+    description: 'Princípios de responsabilidade, segurança e continuidade conectados a tecnologia.',
+    links: [
+      ['Governança ESG', 'esg-antlia'],
+      ['Privacidade', 'politica-de-privacidade'],
+      ['Cookies', 'politica-de-cookies-br'],
+    ],
+  },
+  {
+    key: 'carreiras',
+    label: 'Carreiras',
+    slug: 'trabalhe-conosco',
+    title: 'Pessoas técnicas para problemas concretos.',
+    description: 'Conheça oportunidades e a forma como conectamos profissionais ao contexto certo.',
+    links: [
+      ['Trabalhe conosco', 'trabalhe-conosco'],
+      ['Alocação de profissionais', 'alocacao-de-programadores'],
+      ['Contato', 'contato'],
+    ],
+  },
+] as const
+
 function route(path: string) {
   const x = path.replace(/^\/+|\/+$/g, '')
   if (!x) return 'home'
@@ -140,10 +201,10 @@ function Brand({ light = false }: { light?: boolean }) {
   return (
     <button className="brand" onClick={() => navigate('home')} aria-label="Ir para a página inicial da Antlia">
       <img
-        src={light ? '/brand/logo-antlia-branca.svg' : '/brand/logo-antlia-azul.svg'}
+        src={light ? '/brand/logo-antlia-branca.png' : '/brand/logo-antlia-horizontal.png'}
         alt="Antlia Consultoria e Tecnologia"
-        width="160"
-        height="40"
+        width="180"
+        height="60"
       />
     </button>
   )
@@ -156,7 +217,7 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
     return 'home'
   })
   const [menu, setMenu] = useState(false)
-  const [mega, setMega] = useState(false)
+  const [activeNav, setActiveNav] = useState<string | null>(null)
   const [search, setSearch] = useState(false)
 
   useEffect(() => {
@@ -164,7 +225,7 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
     const update = () => {
       setSlug(route(location.pathname))
       setMenu(false)
-      setMega(false)
+      setActiveNav(null)
     }
     window.addEventListener('popstate', update)
     return () => window.removeEventListener('popstate', update)
@@ -182,9 +243,9 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
     <div className="app-shell">
       <Header
         menu={menu}
-        mega={mega}
         setMenu={setMenu}
-        setMega={setMega}
+        activeNav={activeNav}
+        setActiveNav={setActiveNav}
         openSearch={() => setSearch(true)}
       />
       <AnimatePresence mode="wait">
@@ -207,37 +268,40 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
 
 function Header({
   menu,
-  mega,
   setMenu,
-  setMega,
+  activeNav,
+  setActiveNav,
   openSearch,
 }: {
   menu: boolean
-  mega: boolean
   setMenu: (v: boolean) => void
-  setMega: (v: boolean) => void
+  activeNav: string | null
+  setActiveNav: (v: string | null) => void
   openSearch: () => void
 }) {
+  const activeItem = navItems.find((item) => item.key === activeNav)
+
   return (
-    <header className="site-header">
+    <header className="site-header" onMouseLeave={() => setActiveNav(null)}>
       <div className="header-inner">
         <Brand />
         <nav className={menu ? 'nav open' : 'nav'} aria-label="Navegação Principal">
-          <button className="nav-link" onClick={() => navigate('home')}>
-            Empresa
-          </button>
-          <button className="nav-link" onClick={() => setMega(!mega)} aria-expanded={mega}>
-            Capacidades <ChevronDown size={14} />
-          </button>
-          <button className="nav-link" onClick={() => navigate('blog')}>
-            Insights
-          </button>
-          <button className="nav-link" onClick={() => navigate('esg-antlia')}>
-            ESG
-          </button>
-          <button className="nav-link" onClick={() => navigate('trabalhe-conosco')}>
-            Carreiras
-          </button>
+          {navItems.map((item) => (
+            <button
+              key={item.key}
+              className={activeNav === item.key ? 'nav-link active' : 'nav-link'}
+              onMouseEnter={() => setActiveNav(item.key)}
+              onFocus={() => setActiveNav(item.key)}
+              onClick={() => {
+                navigate(item.slug)
+                setActiveNav(null)
+                setMenu(false)
+              }}
+              aria-expanded={activeNav === item.key}
+            >
+              {item.label}
+            </button>
+          ))}
         </nav>
         <div className="header-actions">
           <button className="icon-button" onClick={openSearch} aria-label="Abrir busca global">
@@ -248,51 +312,55 @@ function Header({
           </button>
           <button
             className="icon-button menu-toggle"
-            onClick={() => setMenu(!menu)}
+            onClick={() => {
+              setMenu(!menu)
+              setActiveNav(null)
+            }}
             aria-label={menu ? 'Fechar menu' : 'Abrir menu'}
           >
             {menu ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </div>
-      {mega && <Mega close={() => setMega(false)} />}
+      <AnimatePresence>{activeItem && !menu && <NavPanel item={activeItem} close={() => setActiveNav(null)} />}</AnimatePresence>
     </header>
   )
 }
 
-function Mega({ close }: { close: () => void }) {
+function NavPanel({ item, close }: { item: (typeof navItems)[number]; close: () => void }) {
   return (
     <motion.div
-      className="mega"
+      className="nav-panel"
       initial={{ opacity: 0, y: -8 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
       transition={{ duration: 0.18 }}
     >
-      <div className="mega-intro">
-        <span className="eyebrow light">ECOSSISTEMA TÉCNICO</span>
-        <h2>Serviços conectados ao ciclo real da operação.</h2>
+      <div className="nav-panel-intro">
+        <span className="eyebrow light">{item.label}</span>
+        <h2>{item.title}</h2>
+        <p>{item.description}</p>
         <button
           onClick={() => {
-            navigate('nossas-solucoes')
+            navigate(item.slug)
             close()
           }}
         >
-          Explorar catálogo de soluções <ArrowRight size={16} />
+          Abrir {item.label.toLowerCase()} <ArrowRight size={16} />
         </button>
       </div>
-      <div className="mega-grid">
-        {services.map(([slug, Icon]) => (
+      <div className="nav-panel-grid">
+        {item.links.map(([label, slug]) => (
           <button
             key={slug}
-            className="mega-card"
+            className="nav-panel-card"
             onClick={() => {
               navigate(slug)
               close()
             }}
           >
-            <Icon size={22} />
-            <strong>{cleanText(bySlug.get(slug)?.title)}</strong>
+            <strong>{label}</strong>
+            <ArrowUpRight size={15} />
           </button>
         ))}
       </div>
@@ -445,14 +513,14 @@ function Home() {
               Profissionais alocados com recorte de senioridade, tecnologia e aderência ao momento do projeto.
             </p>
           </div>
-          <div className="bento-card col-8 brand-card">
-            <img src="/media/brand-system-poster.png" alt="Sistema visual Antlia aplicado a cores, tipografia e símbolo" />
+          <div className="bento-card col-8 proof-card">
+            <img src="/media/quality-assurance-dashboard.png" alt="" />
             <div>
-              <span className="bento-tag">Marca aplicada</span>
-              <h3>Identidade técnica sem perder proximidade humana.</h3>
+              <span className="bento-tag">Ritual de entrega</span>
+              <h3>Discussões técnicas apoiadas por evidência visível.</h3>
               <p>
-                O novo sistema visual usa fotografia operacional, recortes diagonais e contraste institucional para
-                sustentar uma presença mais própria.
+                O trabalho precisa mostrar contexto, prioridade e impacto: menos promessa genérica, mais clareza sobre
+                o que será construído, testado, sustentado e acompanhado.
               </p>
             </div>
           </div>
@@ -1005,7 +1073,7 @@ function PrototypeForm({ title }: { title: string }) {
         <span className="eyebrow light">{cleanText(title)}</span>
       {sent ? (
         <div style={{ padding: '32px 0', textAlign: 'center' }}>
-          <ShieldCheck size={48} style={{ color: 'var(--antlia-lime)', margin: '0 auto 16px' }} />
+          <ShieldCheck size={48} style={{ color: 'var(--antlia-blue-light)', margin: '0 auto 16px' }} />
           <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '22px', margin: '0 0 10px' }}>
             Simulação validada com sucesso!
           </h3>
@@ -1121,6 +1189,13 @@ function SearchPanel({ close }: { close: () => void }) {
 }
 
 function Footer() {
+  const socials = [
+    ['WhatsApp', 'https://wa.me/5511976399943?text=Tenho%20interesse%20em%20saber%20mais%20sobre%20as%20solucoes%20da%20Antlia', 'whatsapp'],
+    ['LinkedIn', 'https://www.linkedin.com/company/antlia_2', 'linkedin'],
+    ['Instagram', 'https://www.instagram.com/antliaconsultoria/', 'instagram'],
+    ['YouTube', 'https://www.youtube.com/channel/UC9xx7t_OHO8AIbgqSJnNWfQ', 'youtube'],
+  ] as const
+
   return (
     <footer>
       <div className="footer-main">
@@ -1149,8 +1224,29 @@ function Footer() {
         </div>
         <div className="footer-column">
           <h3>Contato</h3>
-          <a href="mailto:contato@antlia.com.br">contato@antlia.com.br</a>
-          <span>+55 11 3017-0999</span>
+          <a className="contact-line" href="tel:+551130170999">
+            <Phone size={15} /> +55 11 3017-0999
+          </a>
+          <a className="contact-line" href="tel:+5511976399943">
+            <Phone size={15} /> +55 11 97639-9943
+          </a>
+          <a className="contact-line" href="mailto:contato@antlia.com.br">
+            <Mail size={15} /> contato@antlia.com.br
+          </a>
+          <div className="social-links" aria-label="Redes sociais da Antlia">
+            {socials.map(([name, href, icon]) => (
+              <a
+                key={name}
+                href={href}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={name}
+                className="social-link"
+              >
+                <SocialGlyph icon={icon} />
+              </a>
+            ))}
+          </div>
           <span style={{ lineHeight: 1.5 }}>
             Alameda Campinas, 1100
             <br />
@@ -1166,6 +1262,32 @@ function Footer() {
         </div>
       </div>
     </footer>
+  )
+}
+
+function SocialGlyph({ icon }: { icon: 'whatsapp' | 'linkedin' | 'instagram' | 'youtube' }) {
+  if (icon === 'whatsapp') return <MessageCircle size={18} />
+
+  if (icon === 'linkedin') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M6.3 8.9H3.1v11.2h3.2V8.9ZM4.7 4a1.9 1.9 0 1 0 0 3.8 1.9 1.9 0 0 0 0-3.8Zm15.9 9.7c0-3.1-1.7-5.1-4.4-5.1-1.6 0-2.7.8-3.3 1.7V8.9H9.7v11.2h3.2v-5.9c0-1.6.9-2.6 2.3-2.6 1.3 0 2.1.9 2.1 2.6v5.9h3.3v-6.4Z" />
+      </svg>
+    )
+  }
+
+  if (icon === 'instagram') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M7.6 3.2h8.8A4.4 4.4 0 0 1 20.8 7.6v8.8a4.4 4.4 0 0 1-4.4 4.4H7.6a4.4 4.4 0 0 1-4.4-4.4V7.6a4.4 4.4 0 0 1 4.4-4.4Zm0 2A2.4 2.4 0 0 0 5.2 7.6v8.8a2.4 2.4 0 0 0 2.4 2.4h8.8a2.4 2.4 0 0 0 2.4-2.4V7.6a2.4 2.4 0 0 0-2.4-2.4H7.6Zm4.4 3.4a3.4 3.4 0 1 1 0 6.8 3.4 3.4 0 0 1 0-6.8Zm0 2a1.4 1.4 0 1 0 0 2.8 1.4 1.4 0 0 0 0-2.8Zm4-2.6a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z" />
+      </svg>
+    )
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M21.6 7.1a3 3 0 0 0-2.1-2.1C17.6 4.5 12 4.5 12 4.5s-5.6 0-7.5.5a3 3 0 0 0-2.1 2.1C2 9 2 12 2 12s0 3 .4 4.9A3 3 0 0 0 4.5 19c1.9.5 7.5.5 7.5.5s5.6 0 7.5-.5a3 3 0 0 0 2.1-2.1C22 15 22 12 22 12s0-3-.4-4.9Zm-11.6 8V8.9l5.2 3.1-5.2 3.1Z" />
+    </svg>
   )
 }
 

@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 116" role="img" aria-labelledby="title">
-  <title id="title">Antlia</title>
-  <g fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M54 12 17 79h18l19-35 19 35h18L54 12Z" fill="#FFFFFF" stroke="none"/>
-    <path d="M10 88c26-18 61-20 92-5" stroke-width="8"/>
-  </g>
-  <text x="116" y="74" fill="#FFFFFF" font-family="Space Grotesk,Arial,sans-serif" font-size="54" font-weight="700" letter-spacing="4">ANTLIA</text>
-  <text x="119" y="99" fill="#00C7F2" font-family="Manrope,Arial,sans-serif" font-size="12" font-weight="700" letter-spacing="2.2">CONSULTORIA E TECNOLOGIA</text>
-</svg>

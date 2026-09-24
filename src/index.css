@@ -1,27 +1,27 @@
 :root {
   /* Surfaces & Backgrounds */
   --bg-canvas: #ffffff;
-  --bg-subtle: #f3f7fb;
-  --bg-muted: #e8f0f8;
-  --bg-dark: #071a33;
-  --bg-dark-surface: #0b2444;
-  --bg-dark-card: #102b4e;
-  --bg-dark-elevated: #15365f;
+  --bg-subtle: #f4f8fd;
+  --bg-muted: #e9eef5;
+  --bg-dark: #07182d;
+  --bg-dark-surface: #0a2038;
+  --bg-dark-card: #102a48;
+  --bg-dark-elevated: #173657;
 
   /* Brand Accents */
-  --antlia-deep: #071a33;
-  --antlia-blue: #0757b8;
-  --antlia-blue-hover: #064b9c;
-  --antlia-blue-light: #2e7ed9;
-  --antlia-cyan: #00c7f2;
-  --antlia-cyan-glow: rgba(0, 199, 242, 0.14);
-  --antlia-lime: #b8f23d;
-  --antlia-lime-glow: rgba(184, 242, 61, 0.18);
+  --antlia-deep: #07182d;
+  --antlia-blue: #1e88e5;
+  --antlia-blue-hover: #0066e3;
+  --antlia-blue-light: #6bb8f5;
+  --antlia-cyan: #00a4ff;
+  --antlia-cyan-glow: rgba(0, 164, 255, 0.14);
+  --antlia-horizon: #b9ddf9;
+  --antlia-ice: #e9eef5;
 
   /* Typography Colors */
-  --text-primary: #10243e;
-  --text-secondary: #485c75;
-  --text-muted: #74879f;
+  --text-primary: #0c1b31;
+  --text-secondary: #4f5c6d;
+  --text-muted: #7b8796;
   --text-inverse: #f8fafc;
   --text-inverse-muted: #9ab0c8;
   --text-inverse-subtle: #6d849f;
@@ -31,7 +31,7 @@
   --border-medium: rgba(9, 26, 48, 0.14);
   --border-dark: rgba(255, 255, 255, 0.08);
   --border-dark-medium: rgba(255, 255, 255, 0.14);
-  --border-dark-glow: rgba(0, 199, 242, 0.28);
+  --border-dark-glow: rgba(0, 164, 255, 0.28);
 
   /* Shadows */
   --shadow-subtle: 0 4px 18px rgba(7, 26, 51, 0.035);
@@ -40,9 +40,9 @@
   --shadow-dark: 0 20px 50px rgba(2, 12, 25, 0.42);
 
   /* Fonts */
-  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-body: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  --font-display: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
   /* Radii */
   --radius-xs: 4px;
