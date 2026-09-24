@@ -1156,7 +1156,12 @@ function Kicker({ text }: { text: string }) {
 }
 
 function HeroMedia({ page }: { page?: Page }) {
-  const src = page?.slug === 'home' ? '/media/home-hero.png' : ''
+  const src = page?.slug === 'home'
+    ? '/media/home-hero.png'
+    : page?.type === 'artigo'
+      ? page.image
+      : ''
+
   return src ? <img className="hero-media" src={src} alt="" /> : <div className="hero-media fallback-media" />
 }
 
