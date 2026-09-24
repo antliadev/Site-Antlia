@@ -4,6 +4,7 @@ import path from 'node:path'
 const root = path.resolve(process.cwd(), '..')
 const docsDir = path.join(root, 'docs')
 const output = path.join(process.cwd(), 'src/data/pages.json')
+const importedBlog = path.join(process.cwd(), 'src/data/wp-blog-pages.json')
 
 const noise = [
   'Gerenciar o consentimento', 'Pular para o conteudo', 'Pular para o conteúdo',
@@ -128,10 +129,19 @@ if (!fs.existsSync(docsDir)) {
   process.exit(1)
 }
 
-const pages = fs.readdirSync(docsDir)
+let pages = fs.readdirSync(docsDir)
   .filter((file) => file.endsWith('.md') && file !== 'indice.md' && !file.includes('loaderio'))
   .map(extract)
   .filter((page) => page.title && !page.title.includes('Sem Titulo') && !page.title.includes('Sem Título'))
+
+if (fs.existsSync(importedBlog)) {
+  const posts = JSON.parse(fs.readFileSync(importedBlog, 'utf8'))
+  const importedSlugs = new Set(posts.map((post) => post.slug))
+  pages = [
+    ...pages.filter((page) => page.type !== 'artigo' || page.slug === 'blog' || !page.slug.startsWith('arquivos_') || !importedSlugs.has(page.slug)),
+    ...posts,
+  ]
+}
 
 fs.mkdirSync(path.dirname(output), { recursive: true })
 fs.writeFileSync(output, JSON.stringify(pages, null, 2))

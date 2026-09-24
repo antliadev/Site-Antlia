@@ -86,6 +86,29 @@ body {
   overflow-x: clip;
 }
 
+::selection {
+  background: rgba(30, 136, 229, 0.22);
+  color: var(--text-primary);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-canvas);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-medium);
+  border-radius: var(--radius-pill);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--antlia-blue);
+}
+
 button, input, select, textarea {
   font: inherit;
   letter-spacing: inherit;

@@ -72,12 +72,19 @@
   font-weight: 600;
   color: var(--antlia-blue);
   text-decoration: none;
-  transition: gap var(--transition-fast), color var(--transition-fast);
+  transition: color var(--transition-fast);
+}
+
+.text-link svg {
+  transition: transform var(--transition-fast);
 }
 
 .text-link:hover {
-  gap: 12px;
   color: var(--antlia-blue-hover);
+}
+
+.text-link:hover svg {
+  transform: translateX(4px);
 }
 
 /* ==========================================================================
@@ -161,13 +168,17 @@
   color: var(--text-secondary);
   display: grid;
   place-items: center;
-  transition: all var(--transition-fast);
+  transition: border-color var(--transition-fast), color var(--transition-fast), background-color var(--transition-fast), transform var(--transition-fast);
 }
 
 .icon-button:hover {
   border-color: var(--border-medium);
   color: var(--text-primary);
   background: var(--bg-subtle);
+}
+
+.icon-button:active {
+  transform: scale(0.96);
 }
 
 .contact-button {
@@ -181,12 +192,16 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  transition: transform var(--transition-fast), background var(--transition-fast), box-shadow var(--transition-fast);
+  transition: transform var(--transition-fast), background-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .contact-button:hover {
   background: var(--antlia-blue);
   box-shadow: none;
+}
+
+.contact-button:active {
+  transform: scale(0.97);
 }
 
 .contact-button svg {
@@ -239,11 +254,19 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  transition: gap var(--transition-fast);
+  transition: color var(--transition-fast);
+}
+
+.nav-panel-intro button svg {
+  transition: transform var(--transition-fast);
 }
 
 .nav-panel-intro button:hover {
-  gap: 12px;
+  color: #ffffff;
+}
+
+.nav-panel-intro button:hover svg {
+  transform: translateX(4px);
 }
 
 .nav-panel-grid {
@@ -512,21 +535,24 @@
 .capability-row {
   width: 100%;
   border-bottom: 1px solid var(--border-light);
-  padding: 32px 16px;
+  padding: 28px 16px;
   display: grid;
-  grid-template-columns: 48px 1fr 36px;
+  grid-template-columns: 48px 1fr 24px;
   align-items: center;
-  gap: 28px;
+  gap: 24px;
   text-align: left;
   border-radius: var(--radius-md);
-  transition: all var(--transition-fast);
+  transition: background-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
 }
 
 .capability-row:hover {
   background: var(--bg-canvas);
-  padding-left: 28px;
-  padding-right: 28px;
   box-shadow: var(--shadow-subtle);
+  transform: translateY(-1px);
+}
+
+.capability-row:active {
+  transform: translateY(0);
 }
 
 .capability-row > span {
@@ -1108,12 +1134,20 @@ footer {
   font-size: 15px;
   font-weight: 500;
   color: var(--text-primary);
-  transition: color var(--transition-fast), padding-left var(--transition-fast);
+  transition: color var(--transition-fast), transform var(--transition-fast);
+}
+
+.solution-links button svg {
+  transition: transform var(--transition-fast);
 }
 
 .solution-links button:hover {
   color: var(--antlia-blue);
-  padding-left: 6px;
+  transform: translateX(4px);
+}
+
+.solution-links button:hover svg {
+  transform: translateX(2px);
 }
 
 /* Blog page */
@@ -1140,12 +1174,16 @@ footer {
   padding: 8px 16px;
   font-size: 13px;
   color: var(--text-secondary);
-  transition: all var(--transition-fast);
+  transition: border-color var(--transition-fast), color var(--transition-fast), background-color var(--transition-fast), transform var(--transition-fast);
 }
 
 .chips button:hover {
   border-color: var(--antlia-blue);
   color: var(--antlia-blue);
+}
+
+.chips button:active {
+  transform: scale(0.97);
 }
 
 .article-list {
@@ -1342,11 +1380,12 @@ footer {
 }
 
 .answer-box {
-  border-left: 3px solid var(--antlia-cyan);
+  border: 1px solid var(--border-medium);
   background: var(--bg-subtle);
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-  padding: 28px;
+  border-radius: var(--radius-md);
+  padding: 28px 32px;
   margin-bottom: 48px;
+  box-shadow: var(--shadow-subtle);
 }
 
 .answer-box span {
@@ -1443,11 +1482,15 @@ footer {
   color: #ffffff;
   display: grid;
   place-items: center;
-  transition: all var(--transition-fast);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
 }
 
 .search-close:hover {
   background: rgba(255, 255, 255, 0.1);
+}
+
+.search-close:active {
+  transform: scale(0.95);
 }
 
 .search-box label {
@@ -1493,12 +1536,17 @@ footer {
   text-align: left;
   gap: 16px;
   color: #ffffff;
-  transition: all var(--transition-fast);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
 }
 
 .search-results button:hover {
   background: rgba(255, 255, 255, 0.08);
   border-color: var(--antlia-cyan);
+  transform: translateY(-1px);
+}
+
+.search-results button:active {
+  transform: translateY(0);
 }
 
 .search-results span {
@@ -1615,14 +1663,13 @@ footer {
   }
 
   .capability-row {
-    grid-template-columns: 40px 36px 1fr 24px;
-    gap: 12px;
+    grid-template-columns: 40px 1fr 24px;
+    gap: 14px;
     padding: 20px 8px;
   }
 
   .capability-row:hover {
-    padding-left: 8px;
-    padding-right: 8px;
+    transform: none;
   }
 
   .capability-row h3 {

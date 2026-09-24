@@ -31,6 +31,8 @@ type Page = {
   type: string
   image: string
   images: string[]
+  publishedAt?: string
+  modifiedAt?: string
   blocks: Block[]
 }
 
@@ -122,6 +124,7 @@ const desc = (p: Page) =>
       ? p.description
       : p.blocks.flatMap((b) => b.paragraphs)[0] || 'Conteúdo institucional Antlia.'
   )
+const byRecent = (a: Page, b: Page) => (Date.parse(b.publishedAt || '') || 0) - (Date.parse(a.publishedAt || '') || 0)
 
 const navItems = [
   {
@@ -384,8 +387,8 @@ function Router({ page }: { page: Page }) {
 function Home() {
   const latest = pages
     .filter((p) => p.type === 'artigo' && p.image && p.title.length < 100)
-    .slice(-6)
-    .reverse()
+    .sort(byRecent)
+    .slice(0, 6)
 
   return (
     <>
@@ -586,7 +589,7 @@ function Solutions() {
 function Blog() {
   const articles = pages
     .filter((p) => p.type === 'artigo' && p.slug !== 'blog' && !/newsletter/i.test(p.title))
-    .reverse()
+    .sort(byRecent)
   const cats = pages.filter((p) => p.type === 'categoria').slice(0, 10)
 
   return (
@@ -610,7 +613,7 @@ function Blog() {
         </span>
       </section>
       <section className="article-list section">
-        {articles.slice(0, 30).map((a, i) => (
+        {articles.map((a, i) => (
           <Card key={a.slug} page={a} featured={i === 0} />
         ))}
       </section>
