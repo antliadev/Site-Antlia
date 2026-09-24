@@ -19,6 +19,10 @@ import {
 } from 'lucide-react'
 import pagesData from './data/pages.json'
 import './App.css'
+import { ConstellationShader } from './components/effects/ConstellationShader'
+import { BorderBeam } from './components/effects/BorderBeam'
+import { SpotlightCard } from './components/effects/SpotlightCard'
+import { ScrollProgress } from './components/effects/ScrollProgress'
 
 type Block = { heading: string; paragraphs: string[]; bullets: string[] }
 type Page = {
@@ -240,10 +244,14 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
     if (typeof document !== 'undefined') {
       document.title = page?.seoTitle || 'Antlia | Consultoria e Tecnologia'
     }
-  }, [page])
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'instant' })
+    }
+  }, [page, slug])
 
   return (
     <div className="app-shell">
+      <ScrollProgress />
       <Header
         menu={menu}
         setMenu={setMenu}
@@ -255,10 +263,10 @@ export default function App({ initialPath }: { initialPath?: string } = {}) {
         <motion.main
           key={slug}
           className="main-content"
-          initial={typeof window !== 'undefined' ? { opacity: 0, y: 6 } : false}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.24 }}
+          initial={typeof window !== 'undefined' ? { opacity: 0, y: 12, filter: 'blur(3px)' } : false}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          exit={{ opacity: 0, y: -8, filter: 'blur(2px)' }}
+          transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
         >
           {page ? <Router page={page} /> : <NotFound />}
         </motion.main>
@@ -395,22 +403,39 @@ function Home() {
       <section className="home-hero">
         <HeroMedia page={bySlug.get('home')} />
         <div className="hero-overlay" />
+        <ConstellationShader />
         <div className="home-hero-inner">
-          <Kicker text="ENGENHARIA DE MISSÃO CRÍTICA" />
-          <h1>
-            Engenharia digital para operações críticas.
-          </h1>
-          <p>
-            Software, squads, qualidade e sustentação para empresas que precisam evoluir sem interromper a operação.
-          </p>
-          <div className="hero-actions">
-            <button className="button signal" onClick={() => navigate('contato')}>
-              Conversar com a Antlia <ArrowUpRight size={17} />
-            </button>
-            <button className="button ghost" onClick={() => navigate('nossas-solucoes')}>
-              Ver serviços
-            </button>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <Kicker text="ENGENHARIA DE MISSÃO CRÍTICA" />
+            <h1>
+              Engenharia digital para operações críticas.
+            </h1>
+            <p>
+              Software, squads, qualidade e sustentação para empresas que precisam evoluir sem interromper a operação.
+            </p>
+            <div className="hero-actions">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="button signal"
+                onClick={() => navigate('contato')}
+              >
+                Conversar com a Antlia <ArrowUpRight size={17} />
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="button ghost"
+                onClick={() => navigate('nossas-solucoes')}
+              >
+                Ver serviços
+              </motion.button>
+            </div>
+          </motion.div>
         </div>
       </section>
 
@@ -450,9 +475,8 @@ function Home() {
 
       <section className="operating-model section">
         <div>
-          <h2>
-            Do diagnóstico à sustentação.
-          </h2>
+          <span className="section-label inverse">Método</span>
+          <h2>Do diagnóstico à sustentação.</h2>
           <p className="subtext">
             As equipes entram no contexto do cliente, organizam prioridades técnicas e mantêm clareza sobre risco, entrega e operação.
           </p>
@@ -492,7 +516,8 @@ function Home() {
           title="O que a marca precisa comunicar em cada entrega."
         />
         <div className="bento-grid">
-          <div className="bento-card col-8 dark-theme">
+          <SpotlightCard className="bento-card col-8 dark-theme" spotlightColor="rgba(34, 211, 238, 0.22)">
+            <BorderBeam colorFrom="#22d3ee" colorTo="#0071e3" duration={7} borderWidth={1.5} />
             <span className="bento-tag">Operação crítica</span>
             <div>
               <h3>Disponibilidade tratada como requisito de projeto.</h3>
@@ -501,22 +526,22 @@ function Home() {
                 o que precisa evoluir e onde o risco precisa estar visível.
               </p>
             </div>
-          </div>
-          <div className="bento-card col-4">
+          </SpotlightCard>
+          <SpotlightCard className="bento-card col-4" spotlightColor="rgba(0, 113, 227, 0.12)">
             <span className="bento-tag">Parceria técnica</span>
             <h3>Microsoft Partner</h3>
             <p>
               Sinaliza atuação conectada ao ecossistema corporativo de nuvem, aplicações e modernização.
             </p>
-          </div>
-          <div className="bento-card col-4">
+          </SpotlightCard>
+          <SpotlightCard className="bento-card col-4" spotlightColor="rgba(0, 113, 227, 0.12)">
             <span className="bento-tag">Times e especialistas</span>
             <h3>Capacidade dedicada</h3>
             <p>
               Profissionais alocados com recorte de senioridade, tecnologia e aderência ao momento do projeto.
             </p>
-          </div>
-          <div className="bento-card col-8 proof-card">
+          </SpotlightCard>
+          <SpotlightCard className="bento-card col-8 proof-card" spotlightColor="rgba(34, 211, 238, 0.14)">
             <img src="/media/quality-assurance-dashboard.png" alt="" />
             <div>
               <span className="bento-tag">Ritual de entrega</span>
@@ -526,7 +551,7 @@ function Home() {
                 o que será construído, testado, sustentado e acompanhado.
               </p>
             </div>
-          </div>
+          </SpotlightCard>
         </div>
       </section>
 
@@ -1018,6 +1043,7 @@ function Card({ page, featured = false }: { page: Page; featured?: boolean }) {
 
   return (
     <button className={`article-card ${featured ? 'featured' : ''}`} onClick={() => navigate(page.slug)}>
+      {featured && <BorderBeam colorFrom="#22d3ee" colorTo="#0071e3" duration={9} borderWidth={1.5} />}
       <div className="article-image">
         {hasValidImage ? (
           <img
