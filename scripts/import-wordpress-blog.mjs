@@ -51,17 +51,21 @@ function usableImage(url = '') {
 async function downloadImage(url, dir, nameHint) {
   if (!usableImage(url)) return ''
   await fs.mkdir(dir, { recursive: true })
-  const response = await fetch(url)
-  if (!response.ok) return ''
-  const type = response.headers.get('content-type') || ''
-  if (!type.startsWith('image/') && !/\.(png|jpe?g|webp|gif|svg)$/i.test(url)) return ''
-  const ext = imageExtension(url, type)
-  const hash = crypto.createHash('sha1').update(url).digest('hex').slice(0, 8)
-  const file = `${slugify(nameHint)}-${hash}.${ext}`
-  const target = path.join(dir, file)
-  const body = Buffer.from(await response.arrayBuffer())
-  await fs.writeFile(target, body)
-  return `/imported/blog/${path.basename(dir)}/${file}`
+  try {
+    const response = await fetch(url)
+    if (!response.ok) return ''
+    const type = response.headers.get('content-type') || ''
+    if (!type.startsWith('image/') && !/\.(png|jpe?g|webp|gif|svg)$/i.test(url)) return ''
+    const ext = imageExtension(url, type)
+    const hash = crypto.createHash('sha1').update(url).digest('hex').slice(0, 8)
+    const file = `${slugify(nameHint)}-${hash}.${ext}`
+    const target = path.join(dir, file)
+    const body = Buffer.from(await response.arrayBuffer())
+    await fs.writeFile(target, body)
+    return `/imported/blog/${path.basename(dir)}/${file}`
+  } catch {
+    return ''
+  }
 }
 
 function mediaUrl(post) {
@@ -81,9 +85,9 @@ function extractImages(html = '') {
 
 function htmlBlocks(html = '') {
   const prepared = html
-    .replace(/<\/(p|h1|h2|h3|li|ul|ol|blockquote)>/gi, '</$1>\n')
+    .replace(/<\/(p|h1|h2|h3|h4|h5|h6|li|ul|ol|blockquote)>/gi, '</$1>\n')
     .replace(/<br\s*\/?>/gi, '\n')
-  const tokens = prepared.match(/<(h1|h2|h3)[^>]*>[\s\S]*?<\/\1>|<p[^>]*>[\s\S]*?<\/p>|<li[^>]*>[\s\S]*?<\/li>/gi) || []
+  const tokens = prepared.match(/<(h1|h2|h3|h4|h5|h6)[^>]*>[\s\S]*?<\/\1>|<p[^>]*>[\s\S]*?<\/p>|<li[^>]*>[\s\S]*?<\/li>/gi) || []
   const blocks = []
   let current
 
@@ -161,6 +165,11 @@ for (const post of posts) {
   }
   const blocks = htmlBlocks(post.content?.rendered || '')
   const description = strip(post.excerpt?.rendered || blocks.flatMap((b) => b.paragraphs)[0] || '')
+  const safeBlocks = blocks.length
+    ? blocks
+    : description
+      ? [{ heading: title, paragraphs: [description], bullets: [] }]
+      : []
   pages.push({
     slug: pageSlug,
     path: new URL(post.link).pathname.replace(/\/$/, ''),
@@ -173,7 +182,7 @@ for (const post of posts) {
     images: localImages.slice(0, 12),
     publishedAt: post.date,
     modifiedAt: post.modified,
-    blocks,
+    blocks: safeBlocks,
   })
 }
 

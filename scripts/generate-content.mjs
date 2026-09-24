@@ -50,7 +50,8 @@ const invalidText = (text) => !text
 
 function classify(slug) {
   if (slug === 'home') return 'home'
-  if (slug === 'blog' || slug.startsWith('arquivos_')) return slug.startsWith('arquivos_vagas_') ? 'vaga' : slug.startsWith('arquivos_category_') ? 'categoria' : 'artigo'
+  if (slug === 'blog') return 'blog'
+  if (slug.startsWith('arquivos_')) return slug.startsWith('arquivos_vagas_') ? 'vaga' : slug.startsWith('arquivos_category_') ? 'categoria' : 'artigo'
   if (slug.startsWith('categorias_') || slug === 'category') return 'categoria'
   if (slug.startsWith('solucoes-antlia_')) return 'solucao'
   if (['desenvolvimento-de-software','outsourcing-ti','quality-assurance','atendimento-help-desk','alocacao-de-programadores','nossas-solucoes','solucoes-antlia'].includes(slug)) return 'servico'
