@@ -12,7 +12,6 @@ import {
   Menu,
   Search,
   ShieldCheck,
-  Sparkles,
   UsersRound,
   X,
 } from 'lucide-react'
@@ -37,16 +36,16 @@ const pages = pagesData as Page[]
 const bySlug = new Map(pages.map((p) => [p.slug, p]))
 
 const services = [
-  ['desenvolvimento-de-software', '01', Code2, 'Produtos digitais, plataformas escaláveis e modernização de arquiteturas legadas.'],
-  ['outsourcing-ti', '02', UsersRound, 'Squads dedicados e multidisciplinares integrados à cultura e aos objetivos do seu negócio.'],
-  ['quality-assurance', '03', FileCheck2, 'Engenharia de testes, automação contínua e garantia rigorosa de qualidade no ciclo de entrega.'],
-  ['atendimento-help-desk', '04', Headphones, 'Sustentação N1, N2 e N3 com SLAs críticos para manter sua operação 100% ativa.'],
-  ['alocacao-de-programadores', '05', BriefcaseBusiness, 'Especialistas seniores prontos para acelerar desafios estratégicos de tecnologia.'],
+  ['desenvolvimento-de-software', Code2, 'Produtos digitais, integração com legados e arquitetura preparada para operação contínua.'],
+  ['outsourcing-ti', UsersRound, 'Squads e profissionais integrados ao contexto técnico, ritmo e governança da empresa.'],
+  ['quality-assurance', FileCheck2, 'Testes, automação e critérios de aceite incorporados ao ciclo de entrega.'],
+  ['atendimento-help-desk', Headphones, 'Sustentação N1, N2 e N3 para manter serviços críticos acompanhados de perto.'],
+  ['alocacao-de-programadores', BriefcaseBusiness, 'Especialistas para ampliar capacidade técnica sem perder controle de entrega.'],
 ] as const
 
 const groups = [
   [
-    'Build',
+    'Construir',
     'Produtos & Engenharia',
     [
       'desenvolvimento-angular',
@@ -62,7 +61,7 @@ const groups = [
     ],
   ],
   [
-    'Scale',
+    'Ampliar',
     'Squads & Especialistas',
     [
       'alocacao-de-desenvolvedor-aplicativos',
@@ -77,7 +76,7 @@ const groups = [
     ],
   ],
   [
-    'Assure',
+    'Operar',
     'Qualidade & Operação',
     [
       'atendimento-help-desk',
@@ -95,7 +94,7 @@ const groups = [
 
 const labels: Record<string, string> = {
   solucao: 'SOLUÇÃO ANTLIA',
-  servico: 'CAPACIDADE',
+  servico: 'SERVIÇO',
   artigo: 'INSIGHT',
   vaga: 'CARREIRA',
   perfil: 'LIDERANÇA',
@@ -107,6 +106,7 @@ const labels: Record<string, string> = {
 }
 
 const label = (t: string) => labels[t] || 'ANTLIA'
+const cleanText = (value = '') => value.replace(/[\u2014\u2013]/g, '-').replace(/\s+/g, ' ').trim()
 const id = (v: string) =>
   v
     .toLowerCase()
@@ -115,9 +115,11 @@ const id = (v: string) =>
     .replace(/[^a-z0-9]+/g, '-')
 
 const desc = (p: Page) =>
-  p.description && p.description.length < 260
-    ? p.description
-    : p.blocks.flatMap((b) => b.paragraphs)[0] || 'Conteúdo institucional Antlia.'
+  cleanText(
+    p.description && p.description.length < 260
+      ? p.description
+      : p.blocks.flatMap((b) => b.paragraphs)[0] || 'Conteúdo institucional Antlia.'
+  )
 
 function route(path: string) {
   const x = path.replace(/^\/+|\/+$/g, '')
@@ -242,7 +244,7 @@ function Header({
             <Search size={18} />
           </button>
           <button className="contact-button" onClick={() => navigate('contato')}>
-            Falar com especialista <ArrowUpRight size={16} />
+            Conversar <ArrowUpRight size={16} />
           </button>
           <button
             className="icon-button menu-toggle"
@@ -269,7 +271,7 @@ function Mega({ close }: { close: () => void }) {
     >
       <div className="mega-intro">
         <span className="eyebrow light">ECOSSISTEMA TÉCNICO</span>
-        <h2>Da arquitetura estratégica à sustentação contínua.</h2>
+        <h2>Serviços conectados ao ciclo real da operação.</h2>
         <button
           onClick={() => {
             navigate('nossas-solucoes')
@@ -280,7 +282,7 @@ function Mega({ close }: { close: () => void }) {
         </button>
       </div>
       <div className="mega-grid">
-        {services.map(([slug, n, Icon]) => (
+        {services.map(([slug, Icon]) => (
           <button
             key={slug}
             className="mega-card"
@@ -289,9 +291,8 @@ function Mega({ close }: { close: () => void }) {
               close()
             }}
           >
-            <span>{n}</span>
             <Icon size={22} />
-            <strong>{bySlug.get(slug)?.title}</strong>
+            <strong>{cleanText(bySlug.get(slug)?.title)}</strong>
           </button>
         ))}
       </div>
@@ -320,67 +321,54 @@ function Home() {
 
   return (
     <>
-      {/* CAPÍTULO 1: HERO CINEMATOGRÁFICO */}
       <section className="home-hero">
         <HeroMedia page={bySlug.get('home')} />
         <div className="hero-overlay" />
         <div className="home-hero-inner">
           <Kicker text="ENGENHARIA DE MISSÃO CRÍTICA" />
           <h1>
-            Engenharia digital para operações que <em>não podem parar.</em>
+            Engenharia digital para operações críticas.
           </h1>
           <p>
-            Desenvolvimento de software de alta complexidade, squads especializados, garantia de qualidade e sustentação
-            para transformar tecnologia crítica em capacidade contínua de negócio.
+            Software, squads, qualidade e sustentação para empresas que precisam evoluir sem interromper a operação.
           </p>
           <div className="hero-actions">
             <button className="button signal" onClick={() => navigate('contato')}>
-              Falar com um especialista <ArrowUpRight size={17} />
+              Conversar com a Antlia <ArrowUpRight size={17} />
             </button>
             <button className="button ghost" onClick={() => navigate('nossas-solucoes')}>
-              Explorar ecossistema
+              Ver serviços
             </button>
           </div>
         </div>
-        <div className="hero-proof">
-          <span>DESDE 2006</span>
-          <strong>Engenharia de Software</strong>
-          <strong>Squads Multidisciplinares</strong>
-          <strong>Disponibilidade Contínua</strong>
-        </div>
       </section>
 
-      {/* CAPÍTULO 2: MANIFESTO / POSICIONAMENTO */}
       <section className="statement section">
-        <span className="section-label">01 / PROPÓSITO & ATUAÇÃO</span>
+        <span className="section-label">Como atuamos</span>
         <div>
-          <h2>Tecnologia com clareza de negócio e responsabilidade de operação.</h2>
+          <h2>Tecnologia tratada como continuidade de negócio.</h2>
           <p>
-            A Antlia conecta estratégia corporativa, engenharia de software rigorosa e pessoas de alto desempenho para
-            criar produtos digitais modernos, modernizar sistemas legados e sustentar ambientes onde cada segundo conta.
+            A Antlia combina engenharia de software, squads especializados, qualidade e sustentação para empresas que
+            dependem de sistemas estáveis, integrados e preparados para mudança.
           </p>
         </div>
       </section>
 
-      {/* CAPÍTULO 3: CAPACIDADES EM FORMATO EDITORIAL */}
       <section className="capabilities">
         <div className="capabilities-head">
-          <span className="section-label">02 / CAPACIDADES</span>
+          <span className="section-label">Serviços</span>
           <h2>
-            Uma estrutura completa.
-            <br />
-            Um único parceiro de tecnologia.
+            Cinco frentes para construir, ampliar e sustentar.
           </h2>
         </div>
         <div className="capability-list">
-          {services.map(([slug, n, Icon, d]) => (
+          {services.map(([slug, Icon, d]) => (
             <button className="capability-row" key={slug} onClick={() => navigate(slug)}>
-              <span>{n}</span>
               <div className="capability-row-icon">
                 <Icon size={22} />
               </div>
               <div>
-                <h3>{bySlug.get(slug)?.title}</h3>
+                <h3>{cleanText(bySlug.get(slug)?.title)}</h3>
                 <p>{d}</p>
               </div>
               <ArrowUpRight className="capability-row-arrow" size={20} />
@@ -389,46 +377,35 @@ function Home() {
         </div>
       </section>
 
-      {/* CAPÍTULO 4: MODELO OPERACIONAL NO ESCURO */}
       <section className="operating-model section">
         <div>
-          <span className="section-label inverse">03 / METODOLOGIA</span>
           <h2>
-            Construir.
-            <br />
-            Evoluir.
-            <br />
-            <em>Sustentar.</em>
+            Do diagnóstico à sustentação.
           </h2>
           <p className="subtext">
-            Do diagnóstico de arquitetura à sustentação 24/7, nossas equipes trabalham integradas à realidade operacional de cada cliente.
+            As equipes entram no contexto do cliente, organizam prioridades técnicas e mantêm clareza sobre risco, entrega e operação.
           </p>
         </div>
         <div className="operating-steps">
           {[
             {
-              step: '01',
-              title: 'Diagnóstico & Arquitetura',
-              desc: 'Entendimento detalhado do cenário corporativo, desenho técnico e plano executivo de entrega.',
+              title: 'Diagnóstico técnico',
+              desc: 'Leitura do cenário, restrições, integrações e riscos antes de propor equipe ou solução.',
             },
             {
-              step: '02',
-              title: 'Engenharia Incremental',
-              desc: 'Ciclos curtos e ágeis com qualidade incorporada desde a primeira linha de código.',
+              title: 'Desenho de entrega',
+              desc: 'Definição de arquitetura, responsabilidades, cadência e critérios de qualidade.',
             },
             {
-              step: '03',
-              title: 'Validação & Segurança',
-              desc: 'Garantia de qualidade, testes automatizados e conformidade com padrões corporativos.',
+              title: 'Execução acompanhada',
+              desc: 'Squads, especialistas e QA trabalhando com visibilidade sobre avanço e impedimentos.',
             },
             {
-              step: '04',
-              title: 'Sustentação & Evolução',
-              desc: 'Operação ininterrupta, monitoramento proativo de incidentes e melhoria permanente.',
+              title: 'Sustentação e evolução',
+              desc: 'Acompanhamento contínuo para reduzir recorrência de incidentes e manter o sistema evoluindo.',
             },
           ].map((item) => (
-            <div className="operating-step" key={item.step}>
-              <span>{item.step}</span>
+            <div className="operating-step" key={item.title}>
               <div>
                 <strong>{item.title}</strong>
                 <p>{item.desc}</p>
@@ -438,56 +415,54 @@ function Home() {
         </div>
       </section>
 
-      {/* CAPÍTULO 5: BENTO GRID DE AUTORIDADE E INDICADORES */}
       <section className="bento-section">
         <SectionTitle
-          eyebrow="04 / AUTORIDADE & EVIDÊNCIAS"
-          title="Solidez comprovada em operações corporativas complexas."
+          eyebrow="Evidências"
+          title="O que a marca precisa comunicar em cada entrega."
         />
         <div className="bento-grid">
           <div className="bento-card col-8 dark-theme">
-            <span className="bento-tag">MISSÃO CRÍTICA</span>
+            <span className="bento-tag">Operação crítica</span>
             <div>
-              <h3>Disponibilidade e continuidade para ambientes que sustentam negócios.</h3>
+              <h3>Disponibilidade tratada como requisito de projeto.</h3>
               <p>
-                Desenvolvemos e operamos plataformas transacionais onde estabilidade é premissa mandatória. Nossos squads
-                aplicam práticas de resiliência e alta performance em cada entrega.
+                Em software, squads ou sustentação, a discussão começa pelo impacto operacional: o que não pode parar,
+                o que precisa evoluir e onde o risco precisa estar visível.
               </p>
             </div>
-            <div className="bento-metric">+18 anos</div>
           </div>
           <div className="bento-card col-4">
-            <span className="bento-tag">PARCERIA ESTRATÉGICA</span>
+            <span className="bento-tag">Parceria técnica</span>
             <h3>Microsoft Partner</h3>
             <p>
-              Capacidade técnica atestada para projetos de nuvem, modernização de aplicações e ecossistemas corporativos.
+              Sinaliza atuação conectada ao ecossistema corporativo de nuvem, aplicações e modernização.
             </p>
           </div>
           <div className="bento-card col-4">
-            <span className="bento-tag">TALENTOS & SQUADS</span>
-            <h3>Capacidade Dedicada</h3>
+            <span className="bento-tag">Times e especialistas</span>
+            <h3>Capacidade dedicada</h3>
             <p>
-              Profissionais sêniores em Java, .NET, Angular, Cloud e QA integrados com agilidade à sua operação.
+              Profissionais alocados com recorte de senioridade, tecnologia e aderência ao momento do projeto.
             </p>
           </div>
-          <div className="bento-card col-8">
-            <span className="bento-tag">GOVERNANÇA & ESG</span>
+          <div className="bento-card col-8 brand-card">
+            <img src="/media/brand-system-poster.png" alt="Sistema visual Antlia aplicado a cores, tipografia e símbolo" />
             <div>
-              <h3>Compromisso ativo com responsabilidade, transparência e segurança.</h3>
+              <span className="bento-tag">Marca aplicada</span>
+              <h3>Identidade técnica sem perder proximidade humana.</h3>
               <p>
-                Práticas de integridade ética, responsabilidade socioambiental corporativa e conformidade rigorosa com a
-                Lei Geral de Proteção de Dados (LGPD).
+                O novo sistema visual usa fotografia operacional, recortes diagonais e contraste institucional para
+                sustentar uma presença mais própria.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* CAPÍTULO 6: INSIGHTS & INTELIGÊNCIA */}
       <section className="insights section">
         <SectionTitle
-          eyebrow="05 / INTELIGÊNCIA APLICADA"
-          title="Perspectivas e artigos para decisões técnicas mais seguras."
+          eyebrow="Conteúdo"
+          title="Leituras para decisões técnicas mais seguras."
           action="Ver todas as publicações"
           onAction={() => navigate('blog')}
         />
@@ -498,7 +473,6 @@ function Home() {
         </div>
       </section>
 
-      {/* CAPÍTULO 7: CTA PRINCIPAL */}
       <CTA />
     </>
   )
@@ -510,14 +484,13 @@ function Solutions() {
       <PageHero
         page={bySlug.get('nossas-solucoes')}
         tag="ECOSSISTEMA ANTLIA"
-        title="Capacidades conectadas para todo o ciclo de tecnologia."
-        description="Da concepção arquitetural à sustentação diária, combine engenharia, especialistas e qualidade de acordo com o momento da sua empresa."
+        title="Serviços para cada etapa da operação digital."
+        description="Combine engenharia, especialistas, qualidade e sustentação conforme o momento técnico da sua empresa."
       />
       <section className="solution-catalog section">
-        {groups.map(([verb, group, slugs], i) => (
+        {groups.map(([verb, group, slugs]) => (
           <div className="solution-group" key={group}>
             <div className="group-title">
-              <span>0{i + 1}</span>
               <small>{verb}</small>
               <h2>{group}</h2>
             </div>
@@ -527,7 +500,7 @@ function Solutions() {
                 return (
                   p && (
                     <button key={p.slug} onClick={() => navigate(p.slug)}>
-                      <span>{p.title}</span>
+                      <span>{cleanText(p.title)}</span>
                       <ArrowUpRight size={16} />
                     </button>
                   )
@@ -560,7 +533,7 @@ function Blog() {
         <div className="chips">
           {cats.map((c) => (
             <button key={c.slug} onClick={() => navigate(c.slug)}>
-              {c.title.replace('Arquivos ', '')}
+              {cleanText(c.title.replace('Arquivos ', ''))}
             </button>
           ))}
         </div>
@@ -618,7 +591,7 @@ function Commercial({ page }: { page: Page }) {
       </section>
       <Process />
       <section className="related section" style={{ background: 'var(--bg-subtle)' }}>
-        <SectionTitle eyebrow="CONTINUE EXPLORANDO" title="Capacidades e soluções relacionadas." />
+        <SectionTitle eyebrow="Relacionado" title="Outros serviços próximos." />
         <div className="editorial-grid">
           {related.slice(0, 3).map((p) => (
             <Card key={p.slug} page={p} />
@@ -635,7 +608,7 @@ function Institutional({ page }: { page: Page }) {
 
   return (
     <>
-      <PageHero page={page} tag={esg ? 'AMBIENTAL · SOCIAL · GOVERNANÇA' : label(page.type)} description={desc(page)} />
+      <PageHero page={page} tag={esg ? 'AMBIENTAL, SOCIAL E GOVERNANÇA' : label(page.type)} description={desc(page)} />
       {esg && (
         <section
           style={{
@@ -661,9 +634,7 @@ function Institutional({ page }: { page: Page }) {
                 border: '1px solid var(--border-light)',
               }}
             >
-              <b style={{ fontFamily: 'var(--font-display)', fontSize: '56px', color: 'var(--antlia-blue)', lineHeight: 1 }}>
-                {x[0]}
-              </b>
+              <b style={{ fontFamily: 'var(--font-display)', fontSize: '56px', color: 'var(--antlia-blue)', lineHeight: 1 }}>{x[0]}</b>
               <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '24px', margin: '16px 0 8px' }}>{x[1]}</h3>
               <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '15px' }}>{x[2]}</p>
             </div>
@@ -684,7 +655,7 @@ function Editorial({ page }: { page: Page }) {
       <PageHero page={page} tag={label(page.type)} description={desc(page)} />
       <section className="article-shell section">
         <aside>
-          <span>LEITURA</span>
+          <span>Leitura</span>
           <strong style={{ fontSize: '16px', color: 'var(--text-primary)' }}>
             {Math.max(3, Math.ceil(page.blocks.flatMap((b) => b.paragraphs).join(' ').split(' ').length / 210))} min
           </strong>
@@ -692,7 +663,7 @@ function Editorial({ page }: { page: Page }) {
         </aside>
         <div>
           <div className="answer-box">
-            <span>EM RESUMO</span>
+            <span>Resumo</span>
             <p>{page.blocks.flatMap((b) => b.paragraphs)[0] || desc(page)}</p>
           </div>
           <Rich page={page} />
@@ -700,7 +671,7 @@ function Editorial({ page }: { page: Page }) {
       </section>
       {related.length > 0 && (
         <section className="related section" style={{ background: 'var(--bg-subtle)' }}>
-          <SectionTitle eyebrow="LEIA TAMBÉM" title="Outras perspectivas e insights." />
+          <SectionTitle eyebrow="Relacionado" title="Outras leituras." />
           <div className="editorial-grid">
             {related.map((p) => (
               <Card key={p.slug} page={p} />
@@ -718,7 +689,7 @@ function Job({ page }: { page: Page }) {
       <PageHero page={page} tag="CARREIRAS ANTLIA" description={desc(page)} action="Quero me candidatar" />
       <section className="content-layout section">
         <div>
-          <span className="section-label">A OPORTUNIDADE</span>
+          <span className="section-label">A oportunidade</span>
           <Rich page={page} />
         </div>
         <aside
@@ -732,7 +703,7 @@ function Job({ page }: { page: Page }) {
             border: '1px solid var(--border-dark)',
           }}
         >
-          <span className="eyebrow light">PROCESSO SELETIVO</span>
+          <span className="eyebrow light">Processo seletivo</span>
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '26px', margin: '14px 0' }}>
             Construa o próximo capítulo com a Antlia.
           </h2>
@@ -785,10 +756,8 @@ function Profile({ page }: { page: Page }) {
           )}
         </div>
         <div>
-          <span className="eyebrow light">LIDERANÇA & PESSOAS</span>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(32px, 4.5vw, 56px)', margin: '16px 0 20px' }}>
-            {page.title}
-          </h1>
+          <span className="eyebrow light">Liderança e pessoas</span>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(32px, 4.5vw, 56px)', margin: '16px 0 20px' }}>{cleanText(page.title)}</h1>
           <p style={{ fontSize: '18px', lineHeight: 1.65, color: 'var(--text-inverse-muted)', margin: 0 }}>
             {desc(page)}
           </p>
@@ -802,7 +771,7 @@ function Profile({ page }: { page: Page }) {
 function Policy({ page }: { page: Page }) {
   return (
     <>
-      <PageHero page={page} tag="PRIVACIDADE & GOVERNANÇA" description={desc(page)} />
+      <PageHero page={page} tag="PRIVACIDADE E GOVERNANÇA" description={desc(page)} />
       <Structured page={page} legal />
     </>
   )
@@ -824,7 +793,7 @@ function Journey({ page }: { page: Page }) {
         }}
       >
         <div>
-          <span className="section-label">{ok ? 'PRÓXIMO PASSO' : 'PROTÓTIPO VISUAL'}</span>
+          <span className="section-label">{ok ? 'Próximo passo' : 'Protótipo visual'}</span>
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '38px', lineHeight: 1.1, margin: '16px 0 20px' }}>
             {ok ? 'Recebemos sua mensagem fictícia.' : 'Uma experiência clara, ágil e focada em negócios.'}
           </h2>
@@ -853,7 +822,7 @@ function PageHero({
   description: string
   action?: string
 }) {
-  const h = title || page?.title || 'Antlia'
+  const h = cleanText(title || page?.title || 'Antlia')
 
   return (
     <section className="page-hero">
@@ -869,7 +838,6 @@ function PageHero({
           </button>
         )}
       </div>
-      <div className="page-index">ANTLIA // {tag}</div>
     </section>
   )
 }
@@ -877,15 +845,13 @@ function PageHero({
 function Kicker({ text }: { text: string }) {
   return (
     <div className="hero-kicker">
-      <span>ANTLIA</span>
-      <i />
       {text}
     </div>
   )
 }
 
 function HeroMedia({ page }: { page?: Page }) {
-  const src = page?.slug === 'home' ? '/media/home-hero.png' : page?.image || page?.images?.[0] || ''
+  const src = page?.slug === 'home' ? '/media/home-hero.png' : ''
   return src ? <img className="hero-media" src={src} alt="" /> : <div className="hero-media fallback-media" />
 }
 
@@ -896,10 +862,10 @@ function Structured({ page, legal = false }: { page: Page; legal?: boolean }) {
   return (
     <section className={`content-layout section ${legal ? 'legal' : ''}`}>
       <aside>
-        <span>ÍNDICE DA PÁGINA</span>
+        <span>Nesta página</span>
         {blocks.map((b, i) => (
           <a key={b.heading + i} href={'#' + id(b.heading)}>
-            {b.heading}
+            {cleanText(b.heading)}
           </a>
         ))}
       </aside>
@@ -913,16 +879,16 @@ function Rich({ page }: { page: Page }) {
     <article className="rich-content">
       {page.blocks.map((b, i) => (
         <section id={id(b.heading)} key={b.heading + i} className={i === 0 ? 'lead-block' : ''}>
-          <h2>{b.heading}</h2>
+          <h2>{cleanText(b.heading)}</h2>
           {b.paragraphs.map((p, j) => (
-            <p key={j}>{p}</p>
+            <p key={j}>{cleanText(p)}</p>
           ))}
           {b.bullets.length > 0 && (
             <ul>
               {b.bullets.map((x, j) => (
                 <li key={j}>
                   <Check size={18} />
-                  <span>{x}</span>
+                    <span>{cleanText(x)}</span>
                 </li>
               ))}
             </ul>
@@ -942,7 +908,7 @@ function Process() {
         color: 'var(--text-inverse)',
       }}
     >
-      <span className="section-label inverse">CICLO DE TRABALHO</span>
+      <span className="section-label inverse">Ciclo de trabalho</span>
       <div
         style={{
           display: 'grid',
@@ -951,7 +917,7 @@ function Process() {
           marginTop: '40px',
         }}
       >
-        {['01. Entender', '02. Desenhar', '03. Executar', '04. Evoluir'].map((x, i) => (
+        {['Entender', 'Desenhar', 'Executar', 'Evoluir'].map((x, i) => (
           <div
             key={x}
             style={{
@@ -959,8 +925,7 @@ function Process() {
               borderLeft: '1px solid var(--border-dark)',
             }}
           >
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--antlia-cyan)' }}>FASE 0{i + 1}</span>
-            <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '24px', margin: '20px 0 10px' }}>{x.slice(4)}</h3>
+            <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '24px', margin: '0 0 10px' }}>{x}</h3>
             <p style={{ color: 'var(--text-inverse-subtle)', fontSize: '14px', lineHeight: 1.6, margin: 0 }}>
               {[
                 'Imersão profunda no cenário de negócio, desafios e restrições.',
@@ -981,10 +946,10 @@ function Card({ page, featured = false }: { page: Page; featured?: boolean }) {
     <button className={`article-card ${featured ? 'featured' : ''}`} onClick={() => navigate(page.slug)}>
       <div className="article-image">
         {page.image ? (
-          <img src={page.image} alt={page.title} loading="lazy" />
+            <img src={page.image} alt={cleanText(page.title)} loading="lazy" />
         ) : (
           <div className="image-fallback">
-            <Sparkles size={32} />
+            <img src="/brand/simbolo-antlia.svg" alt="" loading="lazy" />
           </div>
         )}
       </div>
@@ -993,7 +958,7 @@ function Card({ page, featured = false }: { page: Page; featured?: boolean }) {
           <span>{label(page.type)}</span>
           <ArrowUpRight size={16} />
         </div>
-        <h3>{page.title}</h3>
+        <h3>{cleanText(page.title)}</h3>
         <p>{desc(page)}</p>
       </div>
     </button>
@@ -1037,7 +1002,7 @@ function PrototypeForm({ title }: { title: string }) {
         setSent(true)
       }}
     >
-      <span className="eyebrow light">{title}</span>
+        <span className="eyebrow light">{cleanText(title)}</span>
       {sent ? (
         <div style={{ padding: '32px 0', textAlign: 'center' }}>
           <ShieldCheck size={48} style={{ color: 'var(--antlia-lime)', margin: '0 auto 16px' }} />
@@ -1091,8 +1056,8 @@ function CTA() {
   return (
     <section className="cta-band">
       <div>
-        <span className="eyebrow light">PRÓXIMO PASSO</span>
-        <h2>Transforme seu próximo desafio tecnológico em capacidade contínua.</h2>
+        <span className="eyebrow light">Próximo passo</span>
+        <h2>Traga contexto. A Antlia ajuda a organizar o caminho técnico.</h2>
       </div>
       <button className="button signal" onClick={() => navigate('contato')}>
         Conversar com a Antlia <ArrowUpRight size={17} />
@@ -1125,14 +1090,14 @@ function SearchPanel({ close }: { close: () => void }) {
         <X size={20} />
       </button>
       <div className="search-box">
-        <span className="eyebrow light">BUSCA GLOBAL ANTLIA</span>
+        <span className="eyebrow light">Busca Antlia</span>
         <label>
           <Search size={28} style={{ color: 'var(--antlia-cyan)' }} />
           <input
             autoFocus
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Digite para buscar serviços, artigos ou soluções..."
+            placeholder="Busque serviços, artigos ou soluções"
           />
         </label>
         <div className="search-results">
@@ -1145,7 +1110,7 @@ function SearchPanel({ close }: { close: () => void }) {
               }}
             >
               <span>{label(p.type)}</span>
-              <strong>{p.title}</strong>
+              <strong>{cleanText(p.title)}</strong>
               <ArrowUpRight size={16} />
             </button>
           ))}
@@ -1168,7 +1133,7 @@ function Footer() {
         </div>
         <div />
         <div className="footer-column">
-          <h3>CAPACIDADES</h3>
+          <h3>Serviços</h3>
           <button onClick={() => navigate('nossas-solucoes')}>Ecossistema de Soluções</button>
           <button onClick={() => navigate('desenvolvimento-de-software')}>Desenvolvimento de Software</button>
           <button onClick={() => navigate('outsourcing-ti')}>Outsourcing & Squads</button>
@@ -1176,20 +1141,20 @@ function Footer() {
           <button onClick={() => navigate('atendimento-help-desk')}>Help Desk & Sustentação</button>
         </div>
         <div className="footer-column">
-          <h3>INSTITUCIONAL</h3>
+          <h3>Institucional</h3>
           <button onClick={() => navigate('home')}>A Antlia</button>
           <button onClick={() => navigate('blog')}>Insights & Artigos</button>
           <button onClick={() => navigate('esg-antlia')}>Governança ESG</button>
           <button onClick={() => navigate('trabalhe-conosco')}>Carreiras & Vagas</button>
         </div>
         <div className="footer-column">
-          <h3>CONTATO</h3>
+          <h3>Contato</h3>
           <a href="mailto:contato@antlia.com.br">contato@antlia.com.br</a>
           <span>+55 11 3017-0999</span>
           <span style={{ lineHeight: 1.5 }}>
             Alameda Campinas, 1100
             <br />
-            Jardins, São Paulo — SP
+            Jardins, São Paulo - SP
           </span>
         </div>
       </div>
