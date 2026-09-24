@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-labelledby="title">
-  <title id="title">Simbolo Antlia</title>
-  <rect width="120" height="120" rx="18" fill="#0757B8"/>
-  <path d="M60 18 25 82h17l18-34 18 34h17L60 18Z" fill="#fff"/>
-  <path d="M17 92c27-18 60-20 88-4" fill="none" stroke="#00C7F2" stroke-width="8" stroke-linecap="round"/>
-</svg>

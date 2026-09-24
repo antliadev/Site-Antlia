@@ -1017,7 +1017,7 @@ function Card({ page, featured = false }: { page: Page; featured?: boolean }) {
             <img src={page.image} alt={cleanText(page.title)} loading="lazy" />
         ) : (
           <div className="image-fallback">
-            <img src="/brand/simbolo-antlia.svg" alt="" loading="lazy" />
+            <img src="/brand/simbolo-antlia-gradiente.png" alt="" loading="lazy" />
           </div>
         )}
       </div>

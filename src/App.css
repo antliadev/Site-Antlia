@@ -385,9 +385,9 @@
   position: absolute;
   inset: 0;
   background:
-    url('/brand/simbolo-antlia.svg') center right 12% / min(46vw, 420px) no-repeat,
-    linear-gradient(135deg, transparent 0 46%, rgba(0, 199, 242, 0.18) 46% 47%, transparent 47% 100%);
-  opacity: 0.24;
+    url('/brand/simbolo-antlia-gradiente.png') center right 12% / min(46vw, 420px) no-repeat,
+    linear-gradient(135deg, transparent 0 46%, rgba(0, 164, 255, 0.14) 46% 47%, transparent 47% 100%);
+  opacity: 0.18;
 }
 
 .hero-overlay {
