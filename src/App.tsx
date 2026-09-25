@@ -130,6 +130,17 @@ const desc = (p: Page) =>
       : p.blocks.flatMap((b) => b.paragraphs)[0] || 'Conteúdo institucional Antlia.'
   )
 const byRecent = (a: Page, b: Page) => (Date.parse(b.publishedAt || '') || 0) - (Date.parse(a.publishedAt || '') || 0)
+const splitLead = (text = '') => {
+  const sentences = cleanText(text)
+    .split(/(?<=[.!?])\s+/)
+    .map((sentence) => sentence.trim())
+    .filter(Boolean)
+
+  return {
+    lead: sentences.slice(0, 2).join(' ') || cleanText(text),
+    details: sentences.slice(2, 6),
+  }
+}
 
 type NavLinkItem = readonly [label: string, slug: string, descText: string]
 type NavCategory = {
@@ -858,6 +869,7 @@ function Blog() {
 function Commercial({ page }: { page: Page }) {
   const blocks = page.blocks.slice(0, 7)
   const related = pages.filter((p) => p.type === page.type && p.slug !== page.slug).slice(0, 4)
+  const intro = splitLead(blocks[0]?.paragraphs[0] || desc(page))
 
   return (
     <>
@@ -871,7 +883,19 @@ function Commercial({ page }: { page: Page }) {
               : 'Especialização para o seu desafio específico.'}
           </h2>
         </div>
-        <p>{blocks[0]?.paragraphs[0] || desc(page)}</p>
+        <div className="commercial-copy">
+          <p>{intro.lead}</p>
+          {intro.details.length > 0 && (
+            <ul>
+              {intro.details.map((item) => (
+                <li key={item}>
+                  <Check size={16} />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </section>
       <section className="delivery-grid section">
         {blocks.slice(1, 5).map((b, i) => (
