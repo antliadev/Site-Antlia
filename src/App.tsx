@@ -614,10 +614,6 @@ function NavPanel({ item, close }: { item: NavCategory; close: () => void }) {
         >
           <div className="nav-panel-meta">
             <span className="eyebrow light">{item.badge}</span>
-            <span className="nav-panel-status">
-              <span className="status-ping" />
-              SLA 99.9%
-            </span>
           </div>
           <h2>{item.title}</h2>
           <p>{item.description}</p>
@@ -1053,10 +1049,6 @@ function Editorial({ page }: { page: Page }) {
       <PageHero page={page} tag={label(page.type)} description={desc(page)} />
       <section className="article-shell section">
         <div>
-          <div className="answer-box">
-            <span>Resumo</span>
-            <p>{page.blocks.flatMap((b) => b.paragraphs)[0] || desc(page)}</p>
-          </div>
           <Rich page={page} />
         </div>
       </section>
@@ -1348,16 +1340,19 @@ function PageHero({
       <HeroMedia page={page} />
       <div className="hero-overlay" />
       <div className="page-hero-inner">
-        <div>
-          <Kicker text={tag} />
-          <h1 className={h.length > 52 ? 'long-title' : ''}>{h}</h1>
-          <p>{description}</p>
-          {action && (
-            <button className="button signal" onClick={() => navigate('contato')}>
-              {action} <ArrowUpRight size={17} />
-            </button>
-          )}
-        </div>
+        {isArticle && <h1 className="sr-only">{h}</h1>}
+        {!isArticle && (
+          <div>
+            <Kicker text={tag} />
+            <h1 className={h.length > 52 ? 'long-title' : ''}>{h}</h1>
+            <p>{description}</p>
+            {action && (
+              <button className="button signal" onClick={() => navigate('contato')}>
+                {action} <ArrowUpRight size={17} />
+              </button>
+            )}
+          </div>
+        )}
         {isArticle && page?.image && (
           <figure className="article-hero-image">
             <img src={page.image} alt="" />
