@@ -164,7 +164,6 @@ const capabilityImage = (page: Page) => {
 
 const heroIllustration = (page?: Page) => {
   if (!page) return ''
-  if (page.slug === 'esg-antlia') return '/imported/blog/arquivos_9980/dia-da-amazonia-tecnologia-tambem-pode-ser-uma-aliada-da-preservacao-1-f4387b3b.jpg'
   return ''
 }
 
@@ -1362,10 +1361,11 @@ function PageHero({
 }) {
   const h = cleanText(title || page?.title || 'Antlia')
   const isArticle = page?.type === 'artigo'
+  const fullBleedHero = page?.slug === 'esg-antlia'
   const visual = heroIllustration(page)
 
   return (
-    <section className={`page-hero ${isArticle ? 'article-hero' : ''} ${visual ? 'illustrated-hero' : ''}`}>
+    <section className={`page-hero ${isArticle ? 'article-hero' : ''} ${visual ? 'illustrated-hero' : ''} ${fullBleedHero ? 'full-bleed-hero' : ''}`}>
       <HeroMedia page={page} />
       <div className="hero-overlay" />
       <div className="page-hero-inner">
@@ -1406,7 +1406,11 @@ function Kicker({ text }: { text: string }) {
 }
 
 function HeroMedia({ page }: { page?: Page }) {
-  const src = page?.slug === 'home' ? '/media/home-hero.png' : ''
+  const src = page?.slug === 'home'
+    ? '/media/home-hero.png'
+    : page?.slug === 'esg-antlia'
+      ? '/media/esg-hero-realistic.png'
+      : ''
 
   return src ? <img className="hero-media" src={src} alt="" /> : <div className="hero-media fallback-media" />
 }

@@ -1272,6 +1272,42 @@ footer {
   align-items: center;
 }
 
+.page-hero.full-bleed-hero {
+  min-height: clamp(420px, 48vw, 620px);
+  display: grid;
+  align-items: center;
+  padding: clamp(96px, 12vw, 170px) 0 clamp(88px, 10vw, 150px);
+}
+
+.page-hero.full-bleed-hero .hero-media {
+  object-position: center center;
+  opacity: 1;
+  filter: contrast(1.05) brightness(0.98) saturate(1.02);
+}
+
+.page-hero.full-bleed-hero .fallback-media {
+  display: none;
+}
+
+.page-hero.full-bleed-hero .hero-overlay {
+  background:
+    linear-gradient(90deg, rgba(4, 17, 32, 0.92) 0%, rgba(7, 24, 45, 0.82) 33%, rgba(7, 24, 45, 0.38) 64%, rgba(7, 24, 45, 0.18) 100%),
+    linear-gradient(180deg, rgba(4, 17, 32, 0.36) 0%, rgba(4, 17, 32, 0.16) 46%, rgba(4, 17, 32, 0.64) 100%);
+}
+
+.page-hero.full-bleed-hero .page-hero-inner {
+  display: block;
+}
+
+.page-hero.full-bleed-hero .page-hero-inner > div {
+  max-width: 720px;
+}
+
+.page-hero.full-bleed-hero h1,
+.page-hero.full-bleed-hero p {
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.34);
+}
+
 .article-hero-image {
   margin: 0;
   position: relative;
@@ -2121,6 +2157,10 @@ footer {
 
   .page-hero.illustrated-hero .page-hero-inner {
     grid-template-columns: 1fr;
+  }
+
+  .page-hero.full-bleed-hero {
+    min-height: 520px;
   }
 
   .article-hero-image {
