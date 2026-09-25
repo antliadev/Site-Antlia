@@ -711,40 +711,51 @@ function Home() {
   return (
     <>
       <section className="home-hero">
-        <HomeHeroVideo />
         <ConstellationShader />
         <div className="home-hero-inner">
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <Kicker text="ENGENHARIA DE MISSÃO CRÍTICA" />
-            <h1>
-              Engenharia digital para operações críticas.
-            </h1>
-            <p>
-              Software, squads, qualidade e sustentação para empresas que precisam evoluir sem interromper a operação.
-            </p>
-            <div className="hero-actions">
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="button signal"
-                onClick={() => navigate('contato')}
-              >
-                Conversar com a Antlia <ArrowUpRight size={17} />
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="button ghost"
-                onClick={() => navigate('nossas-solucoes')}
-              >
-                Ver serviços
-              </motion.button>
-            </div>
-          </motion.div>
+          <div className="home-hero-grid">
+            <motion.div
+              className="home-hero-content"
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <Kicker text="ENGENHARIA DE MISSÃO CRÍTICA" />
+              <h1>
+                Engenharia digital para operações críticas.
+              </h1>
+              <p>
+                Software, squads, qualidade e sustentação para empresas que precisam evoluir sem interromper a operação.
+              </p>
+              <div className="hero-actions">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="button signal"
+                  onClick={() => navigate('contato')}
+                >
+                  Conversar com a Antlia <ArrowUpRight size={17} />
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="button ghost"
+                  onClick={() => navigate('nossas-solucoes')}
+                >
+                  Ver serviços
+                </motion.button>
+              </div>
+            </motion.div>
+
+            <motion.div
+              className="home-hero-visual"
+              initial={{ opacity: 0, y: 24, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <HomeHeroVideo />
+            </motion.div>
+          </div>
         </div>
       </section>
 
