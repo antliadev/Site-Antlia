@@ -156,18 +156,23 @@ export function HomeHeroVideo({
     gl.enableVertexAttribArray(positionLocation)
     gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0)
 
-    // Flip Y for texture coordinates
+    // Zoomed texture coordinates to remove empty margins and make the subject significantly larger
+    const u1 = 0.1492
+    const u2 = 0.8898
+    const v1 = 0.1528
+    const v2 = 0.8931
+
     const texCoordBuffer = gl.createBuffer()
     gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer)
     gl.bufferData(
       gl.ARRAY_BUFFER,
       new Float32Array([
-        0, 1,
-        1, 1,
-        0, 0,
-        0, 0,
-        1, 1,
-        1, 0,
+        u1, v2,
+        u2, v2,
+        u1, v1,
+        u1, v1,
+        u2, v2,
+        u2, v1,
       ]),
       gl.STATIC_DRAW
     )
