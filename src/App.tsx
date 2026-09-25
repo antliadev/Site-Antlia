@@ -25,6 +25,7 @@ import { ConstellationShader } from './components/effects/ConstellationShader'
 import { BorderBeam } from './components/effects/BorderBeam'
 import { SpotlightCard } from './components/effects/SpotlightCard'
 import { ScrollProgress } from './components/effects/ScrollProgress'
+import { HomeHeroVideo } from './components/HomeHeroVideo'
 
 type Block = { heading: string; paragraphs: string[]; bullets: string[] }
 type Page = {
@@ -710,8 +711,7 @@ function Home() {
   return (
     <>
       <section className="home-hero">
-        <HeroMedia page={bySlug.get('home')} />
-        <div className="hero-overlay" />
+        <HomeHeroVideo />
         <ConstellationShader />
         <div className="home-hero-inner">
           <motion.div
