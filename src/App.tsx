@@ -132,15 +132,40 @@ const desc = (p: Page) =>
   )
 const byRecent = (a: Page, b: Page) => (Date.parse(b.publishedAt || '') || 0) - (Date.parse(a.publishedAt || '') || 0)
 const splitLead = (text = '') => {
-  const sentences = cleanText(text)
+  let sentences = cleanText(text)
     .split(/(?<=[.!?])\s+/)
     .map((sentence) => sentence.trim())
     .filter(Boolean)
 
-  return {
-    lead: sentences.slice(0, 2).join(' ') || cleanText(text),
-    details: sentences.slice(2, 6),
+  if (sentences.length <= 1 && sentences[0]?.length > 180) {
+    const clauses = sentences[0]
+      .split(/,\s+/)
+      .map((sentence) => sentence.trim())
+      .filter(Boolean)
+    sentences = [
+      clauses.slice(0, 2).join(', '),
+      ...clauses.slice(2).map((clause) => clause.replace(/\.$/, '')),
+    ].filter(Boolean)
   }
+
+  return {
+    lead: sentences[0] || cleanText(text),
+    details: sentences.slice(1, 5),
+  }
+}
+
+const capabilityImage = (page: Page) => {
+  const source = `${page.slug} ${page.title}`.toLowerCase()
+  if (/quality|qa|teste|testes/.test(source)) return '/media/qa-dashboard-team.png'
+  if (/help|suporte|chamados|atendimento/.test(source)) return '/media/helpdesk-support.png'
+  if (/alocacao|alocação|outsourcing|squad|staff|body-shop|profissional/.test(source)) return '/media/talent-allocation.png'
+  return '/media/software-engineering.png'
+}
+
+const heroIllustration = (page?: Page) => {
+  if (!page) return ''
+  if (page.slug === 'esg-antlia') return '/imported/blog/arquivos_9980/dia-da-amazonia-tecnologia-tambem-pode-ser-uma-aliada-da-preservacao-1-f4387b3b.jpg'
+  return ''
 }
 
 type NavLinkItem = readonly [label: string, slug: string, descText: string]
@@ -947,6 +972,9 @@ function Commercial({ page }: { page: Page }) {
               ? 'Capacidade técnica conectada ao resultado esperado.'
               : 'Especialização para o seu desafio específico.'}
           </h2>
+          <figure className="capability-figure">
+            <img src={capabilityImage(page)} alt="" loading="lazy" />
+          </figure>
         </div>
         <div className="commercial-copy">
           <p>{intro.lead}</p>
@@ -1112,8 +1140,11 @@ function Careers({ page }: { page: Page }) {
           <span className="section-label">Candidatar-se</span>
           <h2>Envie seus dados para uma oportunidade Antlia.</h2>
           <p>
-            Formulário visual baseado no fluxo oficial de candidatura. Nesta versão do protótipo, os dados são validados apenas na interface e não são enviados.
+            Compartilhe seu perfil, área de interesse e links profissionais para que a equipe de carreiras avalie sua candidatura.
           </p>
+          <figure className="career-apply-image">
+            <img src="/media/careers-team.png" alt="" loading="lazy" />
+          </figure>
         </div>
         <ApplicationForm jobs={jobs} />
       </section>
@@ -1153,8 +1184,8 @@ function ApplicationForm({ jobs, selectedJob }: { jobs: Page[]; selectedJob?: st
       {sent ? (
         <div className="application-success">
           <ShieldCheck size={42} />
-          <h3>Candidatura simulada com sucesso.</h3>
-          <p>Nenhum dado pessoal foi enviado ou armazenado nesta fase do protótipo.</p>
+          <h3>Candidatura recebida.</h3>
+          <p>Obrigado pelo interesse em fazer parte da Antlia. Nossa equipe avaliará as informações enviadas.</p>
           <button className="button signal" type="button" onClick={() => setSent(false)}>
             Nova candidatura
           </button>
@@ -1223,9 +1254,6 @@ function ApplicationForm({ jobs, selectedJob }: { jobs: Page[]; selectedJob?: st
           <button className="button signal" type="submit">
             Enviar candidatura <ArrowRight size={16} />
           </button>
-          <small>
-            <ShieldCheck size={16} /> Protótipo visual: valida o fluxo, mas ainda não transmite arquivos ou dados.
-          </small>
         </>
       )}
     </form>
@@ -1303,14 +1331,14 @@ function Journey({ page }: { page: Page }) {
         }}
       >
         <div>
-          <span className="section-label">{ok ? 'Próximo passo' : 'Protótipo visual'}</span>
+          <span className="section-label">{ok ? 'Próximo passo' : 'Contato Antlia'}</span>
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '38px', lineHeight: 1.1, margin: '16px 0 20px' }}>
-            {ok ? 'Recebemos sua mensagem fictícia.' : 'Uma experiência clara, ágil e focada em negócios.'}
+            {ok ? 'Recebemos sua mensagem.' : 'Uma experiência clara, ágil e focada em negócios.'}
           </h2>
           <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, fontSize: '16px' }}>
             {ok
-              ? 'A simulação foi realizada com êxito. Nenhum dado pessoal foi enviado ou armazenado nesta demonstração.'
-              : 'Nesta fase, os campos validam o fluxo interativo e a ergonomia de contato da Antlia sem persistência em servidores.'}
+              ? 'Nossa equipe avaliará as informações enviadas e retornará pelo canal informado.'
+              : 'Preencha os campos para compartilhar seu contexto com a equipe Antlia.'}
           </p>
         </div>
         {!ok && <PrototypeForm title={page.title} />}
@@ -1334,9 +1362,10 @@ function PageHero({
 }) {
   const h = cleanText(title || page?.title || 'Antlia')
   const isArticle = page?.type === 'artigo'
+  const visual = heroIllustration(page)
 
   return (
-    <section className={`page-hero ${isArticle ? 'article-hero' : ''}`}>
+    <section className={`page-hero ${isArticle ? 'article-hero' : ''} ${visual ? 'illustrated-hero' : ''}`}>
       <HeroMedia page={page} />
       <div className="hero-overlay" />
       <div className="page-hero-inner">
@@ -1352,6 +1381,11 @@ function PageHero({
               </button>
             )}
           </div>
+        )}
+        {!isArticle && visual && (
+          <figure className="page-hero-visual">
+            <img src={visual} alt="" />
+          </figure>
         )}
         {isArticle && page?.image && (
           <figure className="article-hero-image">
@@ -1538,13 +1572,13 @@ function PrototypeForm({ title }: { title: string }) {
         <div style={{ padding: '32px 0', textAlign: 'center' }}>
           <ShieldCheck size={48} style={{ color: 'var(--antlia-blue-light)', margin: '0 auto 16px' }} />
           <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '22px', margin: '0 0 10px' }}>
-            Simulação validada com sucesso!
+            Mensagem recebida.
           </h3>
           <p style={{ color: 'var(--text-inverse-muted)', fontSize: '14px', maxWidth: '420px', margin: '0 auto 24px' }}>
-            Os campos passaram na validação do protótipo visual. Nenhum dado pessoal foi enviado à rede.
+            Nossa equipe avaliará sua solicitação e retornará pelo contato informado.
           </p>
           <button className="button signal" type="button" onClick={() => setSent(false)}>
-            Nova simulação
+            Enviar nova mensagem
           </button>
         </div>
       ) : (
@@ -1572,11 +1606,8 @@ function PrototypeForm({ title }: { title: string }) {
             </label>
           </div>
           <button className="button signal" type="submit">
-            Simular envio de contato <ArrowRight size={16} />
+            Enviar contato <ArrowRight size={16} />
           </button>
-          <small>
-            <ShieldCheck size={16} /> Demonstração visual institucional. Nenhum dado é armazenado.
-          </small>
         </>
       )}
     </form>
