@@ -8,6 +8,7 @@ import {
   ChevronDown,
   Code2,
   FileCheck2,
+  Globe,
   Headphones,
   Mail,
   Menu,
@@ -491,6 +492,7 @@ function Header({
           <button className="icon-button" onClick={openSearch} aria-label="Abrir busca global">
             <Search size={18} />
           </button>
+          <LanguageToggle />
           <button className="contact-button" onClick={() => navigate('contato')}>
             Conversar <ArrowUpRight size={16} />
           </button>
@@ -515,6 +517,72 @@ function Header({
         )}
       </AnimatePresence>
     </header>
+  )
+}
+
+function LanguageToggle() {
+  const [language, setLanguage] = useState<'pt' | 'en'>('pt')
+
+  const loadTranslator = () => {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return
+    const translatorWindow = window as typeof window & {
+      google?: { translate?: { TranslateElement?: new (options: object, element: string) => void } }
+      googleTranslateElementInit?: () => void
+    }
+
+    if (!document.getElementById('google_translate_element')) {
+      const mount = document.createElement('div')
+      mount.id = 'google_translate_element'
+      mount.className = 'translate-mount'
+      document.body.appendChild(mount)
+    }
+
+    translatorWindow.googleTranslateElementInit = () => {
+      const TranslateElement = translatorWindow.google?.translate?.TranslateElement
+      if (TranslateElement && !document.querySelector('#google_translate_element select')) {
+        new TranslateElement(
+          {
+            pageLanguage: 'pt',
+            includedLanguages: 'pt,en',
+            autoDisplay: false,
+          },
+          'google_translate_element'
+        )
+      }
+    }
+
+    if (!document.querySelector('script[data-antlia-translate]')) {
+      const script = document.createElement('script')
+      script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit'
+      script.async = true
+      script.dataset.antliaTranslate = 'true'
+      document.body.appendChild(script)
+    } else {
+      translatorWindow.googleTranslateElementInit()
+    }
+  }
+
+  const applyLanguage = (next: 'pt' | 'en') => {
+    setLanguage(next)
+    if (typeof document !== 'undefined') document.documentElement.lang = next === 'pt' ? 'pt-BR' : 'en'
+    loadTranslator()
+    window.setTimeout(() => {
+      const select = document.querySelector<HTMLSelectElement>('.goog-te-combo')
+      if (!select) return
+      select.value = next
+      select.dispatchEvent(new Event('change'))
+    }, 750)
+  }
+
+  return (
+    <button
+      className="language-button"
+      onClick={() => applyLanguage(language === 'pt' ? 'en' : 'pt')}
+      aria-label={language === 'pt' ? 'Traduzir site para inglês' : 'Voltar site para português'}
+    >
+      <Globe size={15} />
+      <span>{language === 'pt' ? 'PT' : 'EN'}</span>
+    </button>
   )
 }
 
@@ -602,6 +670,7 @@ function NavPanel({ item, close }: { item: NavCategory; close: () => void }) {
 function Router({ page }: { page: Page }) {
   if (page.type === 'home') return <Home />
   if (page.slug === 'blog') return <Blog />
+  if (page.slug === 'trabalhe-conosco') return <Careers page={page} />
   if (['nossas-solucoes', 'solucoes-antlia'].includes(page.slug)) return <Solutions />
   if (['servico', 'solucao'].includes(page.type)) return <Commercial page={page} />
   if (['artigo', 'categoria'].includes(page.type)) return <Editorial page={page} />
@@ -1005,42 +1074,169 @@ function Editorial({ page }: { page: Page }) {
   )
 }
 
-function Job({ page }: { page: Page }) {
+function Careers({ page }: { page: Page }) {
+  const jobs = pages.filter((p) => p.type === 'vaga')
+
   return (
     <>
-      <PageHero page={page} tag="CARREIRAS ANTLIA" description={desc(page)} action="Quero me candidatar" />
-      <section className="content-layout section">
+      <PageHero page={page} tag="CARREIRAS ANTLIA" description={desc(page)} />
+      <section className="careers-intro section">
+        <div>
+          <span className="section-label">Trabalhe conosco</span>
+          <h2>Que tal fazer parte da nossa equipe?</h2>
+        </div>
+        <div className="careers-copy">
+          <p>
+            {page.blocks[0]?.paragraphs[0] ||
+              'Possuímos infraestrutura operacional completa, recursos técnicos e humanos para desenvolver projetos com processos claros e definidos.'}
+          </p>
+          <button className="button signal" onClick={() => document.getElementById('candidatar-se')?.scrollIntoView({ behavior: 'smooth' })}>
+            Candidatar-se <ArrowRight size={16} />
+          </button>
+        </div>
+      </section>
+      <section className="career-jobs section">
+        <SectionTitle eyebrow="Vagas abertas" title="Oportunidades disponíveis." />
+        <div className="job-grid">
+          {jobs.map((job) => (
+            <article className="job-card" key={job.slug}>
+              <span>{label(job.type)}</span>
+              <h3>{cleanText(job.title)}</h3>
+              <p>{desc(job)}</p>
+              <div className="job-card-actions">
+                <button className="text-link" onClick={() => navigate(job.slug)}>
+                  Ver detalhes <ArrowRight size={15} />
+                </button>
+                <button className="button ghost" onClick={() => document.getElementById('candidatar-se')?.scrollIntoView({ behavior: 'smooth' })}>
+                  Candidatar-se
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+      <section className="career-apply section" id="candidatar-se">
+        <div>
+          <span className="section-label">Candidatar-se</span>
+          <h2>Envie seus dados para uma oportunidade Antlia.</h2>
+          <p>
+            Formulário visual baseado no fluxo oficial de candidatura. Nesta versão do protótipo, os dados são validados apenas na interface e não são enviados.
+          </p>
+        </div>
+        <ApplicationForm jobs={jobs} />
+      </section>
+    </>
+  )
+}
+
+function Job({ page }: { page: Page }) {
+  const jobs = pages.filter((p) => p.type === 'vaga')
+
+  return (
+    <>
+      <PageHero page={page} tag="CARREIRAS ANTLIA" description={desc(page)} />
+      <section className="job-detail section">
         <div>
           <span className="section-label">A oportunidade</span>
           <Rich page={page} />
         </div>
-        <aside
-          style={{
-            position: 'sticky',
-            top: '96px',
-            background: 'var(--bg-dark-surface)',
-            color: 'var(--text-inverse)',
-            padding: '36px',
-            borderRadius: 'var(--radius-lg)',
-            border: '1px solid var(--border-dark)',
-          }}
-        >
-          <span className="eyebrow light">Processo seletivo</span>
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '26px', margin: '14px 0' }}>
-            Construa o próximo capítulo com a Antlia.
-          </h2>
-          <p style={{ color: 'var(--text-inverse-muted)', fontSize: '14px', lineHeight: 1.6 }}>
-            Revise os requisitos da vaga e simule sua candidatura neste protótipo visual.
-          </p>
-          <button className="button signal" style={{ width: '100%', marginTop: '20px' }} onClick={() => navigate('contato')}>
-            Iniciar candidatura <ArrowRight size={16} />
-          </button>
-          <small style={{ display: 'block', marginTop: '16px', color: 'var(--text-inverse-subtle)', fontSize: '12px' }}>
-            Nenhum dado é transmitido nesta fase de testes.
-          </small>
-        </aside>
+        <ApplicationForm jobs={jobs} selectedJob={page.title} />
       </section>
     </>
+  )
+}
+
+function ApplicationForm({ jobs, selectedJob }: { jobs: Page[]; selectedJob?: string }) {
+  const [sent, setSent] = useState(false)
+
+  return (
+    <form
+      className="application-form"
+      onSubmit={(event) => {
+        event.preventDefault()
+        setSent(true)
+      }}
+    >
+      <h2>Candidatar-se</h2>
+      {sent ? (
+        <div className="application-success">
+          <ShieldCheck size={42} />
+          <h3>Candidatura simulada com sucesso.</h3>
+          <p>Nenhum dado pessoal foi enviado ou armazenado nesta fase do protótipo.</p>
+          <button className="button signal" type="button" onClick={() => setSent(false)}>
+            Nova candidatura
+          </button>
+        </div>
+      ) : (
+        <>
+          <div className="application-grid">
+            <label>
+              Nome completo *
+              <input required autoComplete="name" />
+            </label>
+            <label>
+              Telefone *
+              <input required type="tel" autoComplete="tel" />
+            </label>
+            <label className="wide">
+              E-mail *
+              <input required type="email" autoComplete="email" />
+            </label>
+            <label className="wide">
+              Mensagem
+              <textarea rows={4} />
+            </label>
+            <label>
+              Para qual vaga você está aplicando? *
+              <select required defaultValue={selectedJob || jobs[0]?.title || ''}>
+                {jobs.map((job) => (
+                  <option key={job.slug} value={job.title}>
+                    {cleanText(job.title)}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Qual nível você se enquadra? *
+              <select required defaultValue="Junior">
+                <option>Estágio</option>
+                <option>Junior</option>
+                <option>Pleno</option>
+                <option>Sênior</option>
+                <option>Especialista</option>
+              </select>
+            </label>
+            <label className="wide">
+              Qual modelo de contrato você prefere? *
+              <select required defaultValue="Indiferente">
+                <option>Indiferente</option>
+                <option>CLT</option>
+                <option>PJ</option>
+                <option>Temporário</option>
+              </select>
+            </label>
+            <label className="wide">
+              GitHub
+              <input type="url" placeholder="https://github.com/seu-usuario" />
+            </label>
+            <label className="wide">
+              LinkedIn
+              <input type="url" placeholder="https://www.linkedin.com/in/seu-perfil" />
+            </label>
+            <label className="wide file-field">
+              Envie seu currículo
+              <input type="file" accept=".pdf,.doc,.docx" />
+            </label>
+          </div>
+          <button className="button signal" type="submit">
+            Enviar candidatura <ArrowRight size={16} />
+          </button>
+          <small>
+            <ShieldCheck size={16} /> Protótipo visual: valida o fluxo, mas ainda não transmite arquivos ou dados.
+          </small>
+        </>
+      )}
+    </form>
   )
 }
 
